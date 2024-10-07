@@ -1,8 +1,12 @@
-import QtQuick
+import QtQuick.Controls
+import QtCore
 
-Window {
-    width: 640
-    height: 480
+ApplicationWindow {
     visible: true
-    title: qsTr("Hello World")
+
+    Profile {
+        anchors.fill: parent
+        source: StandardPaths.locate(StandardPaths.PicturesLocation, "ProfilePic.png")
+        fullName: "Dawit Berhan"
+    }
 }

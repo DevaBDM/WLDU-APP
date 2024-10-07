@@ -23,7 +23,10 @@ qt_add_qml_module(
   VERSION
   1.0
   QML_FILES
-  src/Main.qml)
+  src/Main.qml
+  src/Profile.qml
+  #
+)
 
 target_link_libraries(appWLDU PRIVATE Qt6::Quick)
 
