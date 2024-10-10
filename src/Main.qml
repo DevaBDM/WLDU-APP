@@ -57,16 +57,20 @@ ApplicationWindow {
         initialItem: profileInfo
     }
 
+    function profilePicLocation() {
+        return StandardPaths.locate(root.path, "ProfilePicCutted.png");
+    }
+
     Component {
         id: profileInfo
         Profile {
             ListModel {
                 id: editModel
                 ListElement {
-                    name: "Save"
+                    name: "Done"
                     triggered: function () {
                         settings.source = "";
-                        settings.source = StandardPaths.locate(root.path, "ProfilePic.png");
+                        settings.source = root.profilePicLocation();
                         settings.fullName = stackView.currentItem.fullName;
                         root.header.model = "";
                         stackView.pop();
@@ -82,7 +86,6 @@ ApplicationWindow {
                 onClicked: {
                     root.header.model = editModel;
                     stackView.push(editProfile);
-                    stackView.state = "Editing";
                 }
             }
         }
@@ -94,10 +97,24 @@ ApplicationWindow {
             source: settings.source
             fullName: settings.fullName
             onSelected: selectedFile => {
-                source = "";
-                source = StandardPaths.locate(root.path, "ProfilePic.png");
-                if (source == "")
-                    source = "../assets/icons/circle-user.svg";
+                root.header.visible = false;
+                stackView.push(cutPicture, {
+                    "loadSource": selectedFile,
+                    "savePath": StandardPaths.writableLocation(root.path)
+                });
+            }
+        }
+    }
+
+    Component {
+        id: cutPicture
+        CutProfilePic {
+            source: StandardPaths.locate(root.path, "ProfilePic.png")
+            onSaved: fileName => {
+                settings.source = "";
+                settings.source = StandardPaths.locate(root.path, fileName);
+                root.header.visible = true;
+                stackView.pop();
             }
         }
     }

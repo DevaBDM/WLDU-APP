@@ -27,6 +27,7 @@ qt_add_qml_module(
   src/Main.qml
   src/Profile.qml
   src/EditProfile.qml
+  src/CutProfilePic.qml
   RESOURCES
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg
