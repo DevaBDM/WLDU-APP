@@ -28,6 +28,7 @@ qt_add_qml_module(
   #
 )
 
+target_include_directories(appWLDU PRIVATE include qmltypes/include)
 target_link_libraries(appWLDU PRIVATE Qt6::Quick)
 
 add_custom_target(
