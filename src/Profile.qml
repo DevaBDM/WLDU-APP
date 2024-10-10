@@ -58,6 +58,7 @@ ListView {
             width: height
             cache: false
             source: lv.source
+            asynchronous: true
             TapHandler {
                 onSingleTapped: {
                     maxBinding.enabled = !maxBinding.enabled;

@@ -11,6 +11,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
+qt_policy(SET QTP0001 NEW)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
@@ -25,6 +26,14 @@ qt_add_qml_module(
   QML_FILES
   src/Main.qml
   src/Profile.qml
+  src/EditProfile.qml
+  RESOURCES
+  assets/icons/edit-profile.svg
+  assets/icons/user-large.svg
+  assets/icons/circle-user.svg
+  SOURCES
+  qmltypes/include/CopyFile.h
+  qmltypes/src/CopyFile.cpp
   #
 )
 
