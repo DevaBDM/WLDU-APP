@@ -30,9 +30,38 @@ Page {
         PinchHandler {
             id: pinch
             target: null
-            rotationAxis.enabled: false
-            // xAxis.enabled: false
-            // yAxis.enabled: false
+            property real lastWidth: !pinch.active ? parent.width : lastWidth
+            property real lastCX: !pinch.active ? centroid.position.x : lastCX
+            property real lastParentX: !pinch.active ? parent.x : lastParentX
+
+            property real ratioX: active ? lastCX / lastWidth : ratioX
+            property real differenceX: active ? lastParentX + lastCX : differenceX
+
+            property real xAxis: active ? xAxisOld * activeScale : xAxisOld
+            property real xAxisOld: 1
+
+            property real lastHeight: !pinch.active ? parent.height : lastHeight
+            property real lastCY: !pinch.active ? centroid.position.y : lastCY
+            property real lastParentY: !pinch.active ? parent.y : lastParentY
+
+            property real ratioY: active ? lastCY / lastHeight : ratioY
+            property real differenceY: active ? lastParentY + lastCY : differenceY
+
+            property real yAxis: active ? yAxisOld * activeScale : yAxisOld
+            property real yAxisOld: 1
+            onActiveChanged: {
+                if (!active) {
+                    xAxisOld = xAxis;
+                    yAxisOld = yAxis;
+                }
+            }
+        }
+
+        Binding {
+            when: pinch.active
+            flickable.contentX: flickable.contentWidth * pinch.ratioX - pinch.differenceX
+            flickable.contentY: flickable.contentHeight * pinch.ratioY - pinch.differenceY
+            restoreMode: Binding.RestoreBinding
         }
 
         Image {
