@@ -28,6 +28,7 @@ qt_add_qml_module(
   src/Profile.qml
   src/EditProfile.qml
   src/CutProfilePic.qml
+  src/Wellcome.qml
   RESOURCES
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg

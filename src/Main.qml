@@ -54,7 +54,7 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: profileInfo
+        initialItem: wellcome
     }
 
     function profilePicLocation() {
@@ -116,6 +116,13 @@ ApplicationWindow {
                 root.header.visible = true;
                 stackView.pop();
             }
+        }
+    }
+
+    Component {
+        id: wellcome
+        Wellcome {
+            onRegisterClicked: stackView.push(profileInfo)
         }
     }
 }
