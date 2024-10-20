@@ -24,12 +24,41 @@ ApplicationWindow {
         }
     }
 
-    header: Pane {
+    header: ToolBar {
         property alias model: headerModel.model
-        RowLayout {
+        ColumnLayout {
             anchors.fill: parent
+            Repeater {
+                model: ["ወልድያ ዩኒቨርሲቲ", "WOLDIA UNIVERSITY"]
+                Label {
+                    // Layout.alignment: Qt.AlignHCenter
+                    Layout.fillWidth: true
+                    Layout.fillHeight: true
+
+                    horizontalAlignment: Label.AlignHCenter
+                    verticalAlignment: Label.AlignVCenter
+
+                    text: modelData
+                    fontSizeMode: Label.VerticalFit
+                    minimumPixelSize: 1
+                    font {
+                        pixelSize: 100
+                        bold: true
+                    }
+                    elide: Label.ElideMiddle
+                }
+            }
+        }
+        RowLayout {
+            id: headerRow
+            anchors {
+                left: parent.left
+                right: parent.right
+            }
+
             ToolButton {
-                text: "<"
+                icon.source: "../assets/icons/back.svg"
+                leftPadding: 0
                 onClicked: {
                     headerModel.model = "";
                     stackView.pop();

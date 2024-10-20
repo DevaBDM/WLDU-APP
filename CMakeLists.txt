@@ -34,6 +34,7 @@ qt_add_qml_module(
   src/Student_SignUp.qml
   src/Personal_SignUp.qml
   RESOURCES
+  assets/icons/back.svg
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg
   assets/icons/circle-user.svg
