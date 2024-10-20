@@ -122,7 +122,13 @@ ApplicationWindow {
     Component {
         id: wellcome
         Wellcome {
-            onRegisterClicked: stackView.push(profileInfo)
+            onRegisterClicked: stackView.push(register)
+        }
+    }
+    Component {
+        id: register
+        Register {
+            onDone: stackView.replace(this, profileInfo)
         }
     }
 }

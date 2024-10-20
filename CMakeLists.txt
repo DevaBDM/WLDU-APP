@@ -29,6 +29,10 @@ qt_add_qml_module(
   src/EditProfile.qml
   src/CutProfilePic.qml
   src/Wellcome.qml
+  src/Register.qml
+  src/Account_SingUp.qml
+  src/Student_SignUp.qml
+  src/Personal_SignUp.qml
   RESOURCES
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg
