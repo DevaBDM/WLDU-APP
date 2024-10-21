@@ -28,7 +28,7 @@ qt_add_qml_module(
   src/Profile.qml
   src/EditProfile.qml
   src/CutProfilePic.qml
-  src/Wellcome.qml
+  src/Welcome.qml
   src/Register.qml
   src/Account_SingUp.qml
   src/Student_SignUp.qml

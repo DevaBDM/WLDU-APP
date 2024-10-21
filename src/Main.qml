@@ -83,7 +83,7 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: wellcome
+        initialItem: welcome
     }
 
     function profilePicLocation() {
@@ -149,8 +149,8 @@ ApplicationWindow {
     }
 
     Component {
-        id: wellcome
-        Wellcome {
+        id: welcome
+        Welcome {
             onRegisterClicked: stackView.push(register)
         }
     }

@@ -11,7 +11,7 @@ Item {
             text: "Welcome!!!"
             horizontalAlignment: Label.AlignHCenter
             verticalAlignment: Label.AlignBottom
-            fontSizeMode: Text.Fit
+            fontSizeMode: Label.Fit
             minimumPixelSize: 0
             font {
                 pixelSize: 50
