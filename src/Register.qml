@@ -4,9 +4,21 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 Item {
+    id: root
     signal done
+    property alias imageSource: account.imageSource
+    property alias userName: account.userName
+    property alias bio: account.bio
+    property alias key: account.key
+    property alias firstName: personal.firstName
+    property alias fatherName: personal.fatherName
+    property alias phoneNumber: personal.phoneNumber
+    property alias email: personal.email
+    property alias gender: personal.gender
+    property alias studentId: student.studentID
+    property alias department: student.department
+
     Settings {
-        id: settings
         property alias imageSource: account.imageSource
         property alias userName: account.userName
         property alias bio: account.bio
@@ -19,18 +31,28 @@ Item {
         property alias studentId: student.studentID
         property alias department: student.department
     }
+
+    states: State {
+        name: "full"
+        PropertyChanges {
+            target: pi
+            visible: false
+        }
+        PropertyChanges{
+            target:buttonControl
+            visible: false
+        }
+    }
+
     ColumnLayout {
         anchors.fill: parent
         PageIndicator {
             id: pi
             Layout.alignment: Qt.AlignHCenter
-            // Layout.fillWidth: true
             count: sv.count
             currentIndex: sv.currentIndex
             delegate: Pane {
                 Label {
-                    // Material.foreground: index == pi.currentIndex ? Material.Blue : Material.Red
-                    // required property real index
                     text: index
                     font {
                         pixelSize: index == pi.currentIndex ? 30 : 10
@@ -44,37 +66,31 @@ Item {
             Layout.fillHeight: true
             Personal_SignUp {
                 id: personal
-                Button {
-                    text: "Next"
-                    onClicked: sv.incrementCurrentIndex()
-                    anchors {
-                        bottom: parent.bottom
-                        right: parent.right
-                    }
-                }
             }
             Account_SingUp {
                 id: account
-                Button {
-                    text: "Next"
-                    onClicked: sv.incrementCurrentIndex()
-                    anchors {
-                        bottom: parent.bottom
-                        right: parent.right
-                    }
+                onFull: {
+                    root.state = root.state === "full" ? "" : "full";
                 }
             }
             Student_SignUp {
                 id: student
-                Button {
+            }
+        }
+        Button {
+            id: buttonControl
+            states: State {
+                name: "Done"
+                PropertyChanges {
+                    target:buttonControl
                     text: "Done"
                     onClicked: done()
-                    anchors {
-                        bottom: parent.bottom
-                        right: parent.right
-                    }
                 }
             }
+            state: sv.count-1 == sv.currentIndex ? "Done" : ""
+            Layout.alignment: Qt.AlignRight
+            text: "Next"
+            onClicked: sv.incrementCurrentIndex()
         }
     }
 }
