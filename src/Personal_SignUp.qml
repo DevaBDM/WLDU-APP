@@ -3,46 +3,57 @@ import QtQuick.Layouts
 import QtQuick.Controls
 
 Item {
-    ColumnLayout {
+    id: root
+    property alias firstName: firstNameTf.text
+    property alias fatherName: fatherNameTf.text
+    property alias phoneNumber: phoneNumberTf.text
+    property alias email: emailTf.text
+    property alias gender: genderCb.currentIndex
+    ListView {
+        id: lv
         anchors.fill: parent
-        ListView {
-            id: lv
-            Layout.fillHeight: true
-            Layout.fillWidth: true
-            clip: true
-            spacing: 5
-            header: Label {
-                width: parent.width
-                // height: 50
+        clip: true
+        spacing: 10
+        header: Pane {
+            width: parent.width
+            height: 60
+            Label {
+                anchors.fill: parent
                 text: "Personal information"
-                wrapMode: Label.Wrap
+                elide: Label.ElideMiddle
                 horizontalAlignment: Qt.AlignHCenter
-                // fontSizeMode: Label.HorizontalFit
-                // minimumPixelSize: 0
-                // font {
-                //     pixelSize: 50
-                // }
-            }
-            model: ListModel {
-                ListElement {
-                    label: "First Name"
-                }
-                ListElement {
-                    label: "Father Name"
-                }
-                ListElement {
-                    label: "Phone Number"
-                }
-                ListElement {
-                    label: "Email"
+                verticalAlignment: Qt.AlignVCenter
+                fontSizeMode: Label.Fit
+                minimumPixelSize: 1
+                font {
+                    pixelSize: 100
                 }
             }
-            delegate: TextField {
-                width: ListView.view.width
-                placeholderText: label
+        }
+        model: ObjectModel {
+            TextField {
+                id: firstNameTf
+                width: lv.width
+                placeholderText: "Enter your name(required)"
             }
-            footer: ComboBox {
-                width: parent.width
+            TextField {
+                id: fatherNameTf
+                width: lv.width
+                placeholderText: "Enter your Father Name(required)"
+            }
+            TextField {
+                id: phoneNumberTf
+                width: lv.width
+                placeholderText: "Enter your Phone number(required)"
+            }
+            TextField {
+                id: emailTf
+                width: lv.width
+                placeholderText: "Enter your email(optional)"
+            }
+            ComboBox {
+                id: genderCb
+                width: lv.width
                 model: ['M', 'F']
             }
         }

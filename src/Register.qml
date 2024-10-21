@@ -1,9 +1,24 @@
 import QtQuick
+import QtCore
 import QtQuick.Layouts
 import QtQuick.Controls
 
 Item {
     signal done
+    Settings {
+        id: settings
+        property alias imageSource: account.imageSource
+        property alias userName: account.userName
+        property alias bio: account.bio
+        property alias key: account.key
+        property alias firstName: personal.firstName
+        property alias fatherName: personal.fatherName
+        property alias phoneNumber: personal.phoneNumber
+        property alias email: personal.email
+        property alias gender: personal.gender
+        property alias studentId: student.studentID
+        property alias department: student.department
+    }
     ColumnLayout {
         anchors.fill: parent
         PageIndicator {
