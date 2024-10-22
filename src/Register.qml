@@ -38,8 +38,8 @@ Item {
             target: pi
             visible: false
         }
-        PropertyChanges{
-            target:buttonControl
+        PropertyChanges {
+            target: buttonControl
             visible: false
         }
     }
@@ -82,12 +82,12 @@ Item {
             states: State {
                 name: "Done"
                 PropertyChanges {
-                    target:buttonControl
+                    target: buttonControl
                     text: "Done"
                     onClicked: done()
                 }
             }
-            state: sv.count-1 == sv.currentIndex ? "Done" : ""
+            state: sv.count - 1 == sv.currentIndex ? "Done" : ""
             Layout.alignment: Qt.AlignRight
             text: "Next"
             onClicked: sv.incrementCurrentIndex()
