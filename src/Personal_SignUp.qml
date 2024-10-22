@@ -41,10 +41,16 @@ Item {
                 width: lv.width
                 placeholderText: "Enter your Father Name(required)"
             }
-            TextField {
-                id: phoneNumberTf
-                width: lv.width
-                placeholderText: "Enter your Phone number(required)"
+            RowLayout {
+                    width: lv.width
+                Label {
+                    text: "+251"
+                }
+                TextField {
+                    id: phoneNumberTf
+                    Layout.fillWidth:true
+                    placeholderText: "Enter your Phone number(required)"
+                }
             }
             TextField {
                 id: emailTf

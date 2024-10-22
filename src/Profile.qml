@@ -5,7 +5,7 @@ import QtQuick.Controls
 Item {
     id: root
     property alias source: ppImage.source
-    property alias fullName: nameLabel.text
+    property alias userName: nameLabel.text
     property alias model: lv.model
     property alias delegate: lv.delegate
     ColumnLayout {

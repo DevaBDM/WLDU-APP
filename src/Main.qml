@@ -12,16 +12,26 @@ ApplicationWindow {
 
     Settings {
         id: settings
-        property string fullName: "Set full Name"
-        property url source: "../assets/icons/circle-user.svg"
-        onFullNameChanged: {
-            if (fullName == "")
-                fullName = "Set Name";
+        property string userName: "Set Username"
+        property url imageSource: "../assets/icons/circle-user.svg"
+        onUserNameChanged: {
+            if (userName == "")
+                userName = "Set Username";
         }
-        onSourceChanged: {
-            if (source == "")
-                source = "../assets/icons/circle-user.svg";
+        onImageSourceChanged: {
+            if (imageSource == "")
+                imageSource = "../assets/icons/circle-user.svg";
         }
+        property string bio
+        property string key
+        property string firstName
+        property string fatherName
+        property real phoneNumber
+        property string email
+        property string gender
+        property real studentId
+        property string department
+        property bool registered: false
     }
 
     header: ToolBar {
@@ -31,7 +41,6 @@ ApplicationWindow {
             Repeater {
                 model: ["ወልድያ ዩኒቨርሲቲ", "WOLDIA UNIVERSITY"]
                 Label {
-                    // Layout.alignment: Qt.AlignHCenter
                     Layout.fillWidth: true
                     Layout.fillHeight: true
 
@@ -59,6 +68,7 @@ ApplicationWindow {
             ToolButton {
                 icon.source: "../assets/icons/back.svg"
                 leftPadding: 0
+                visible: stackView.depth > 1
                 onClicked: {
                     headerModel.model = "";
                     stackView.pop();
@@ -83,7 +93,11 @@ ApplicationWindow {
     StackView {
         id: stackView
         anchors.fill: parent
-        initialItem: welcome
+        Component.onCompleted: if (settings.registered) {
+            push(profileInfo);
+        } else {
+            push(welcome);
+        }
     }
 
     function profilePicLocation() {
@@ -93,27 +107,29 @@ ApplicationWindow {
     Component {
         id: profileInfo
         Profile {
-            ListModel {
-                id: editModel
-                ListElement {
-                    name: "Done"
-                    triggered: function () {
-                        settings.source = "";
-                        settings.source = root.profilePicLocation();
-                        settings.fullName = stackView.currentItem.fullName;
-                        root.header.model = "";
-                        stackView.pop();
-                    }
+            model: ObjectModel {
+                Label {
+                    width: ListView.view.width
+                    text: "Full name: " + settings.firstName + " " + settings.fatherName
+                }
+                Label {
+                    width: ListView.view.width
+                    text: "Phone: +251" + settings.phoneNumber
+                }
+                Label {
+                    width: ListView.view.width
+                    text: "Bio: " + settings.bio
                 }
             }
-            fullName: settings.fullName
-            source: settings.source
+            userName: settings.userName
+            source: settings.imageSource
             ToolButton {
                 icon.source: "../assets/icons/edit-profile.svg"
-                anchors.right: parent.right
-                anchors.top: parent.top
+                anchors {
+                    right: parent.right
+                    top: parent.top
+                }
                 onClicked: {
-                    root.header.model = editModel;
                     stackView.push(editProfile);
                 }
             }
@@ -122,27 +138,35 @@ ApplicationWindow {
 
     Component {
         id: editProfile
-        EditProfile {
-            source: settings.source
-            fullName: settings.fullName
-            onSelected: selectedFile => {
-                root.header.visible = false;
-                stackView.push(cutPicture, {
-                    "loadSource": selectedFile,
-                    "savePath": StandardPaths.writableLocation(root.path)
-                });
-            }
-        }
-    }
+        Register {
+            id: register
+            imageSource: settings.imageSource
+            userName: settings.userName
+            bio: settings.bio
+            key: settings.key
+            firstName: settings.firstName
+            fatherName: settings.fatherName
+            phoneNumber: settings.phoneNumber
+            email: settings.email
+            gender: settings.gender
+            studentId: settings.studentId
+            department: settings.department
 
-    Component {
-        id: cutPicture
-        CutProfilePic {
-            source: StandardPaths.locate(root.path, "ProfilePic.png")
-            onSaved: fileName => {
-                settings.source = "";
-                settings.source = StandardPaths.locate(root.path, fileName);
-                root.header.visible = true;
+            onDone: {
+                var tempSource = imageSource;
+                settings.imageSource = "";
+                settings.imageSource = tempSource;
+                settings.userName = userName;
+                settings.bio = bio;
+                settings.key = key;
+                settings.firstName = firstName;
+                settings.fatherName = fatherName;
+                settings.phoneNumber = phoneNumber;
+                settings.email = email;
+                settings.gender = gender;
+                settings.studentId = studentId;
+                settings.department = department;
+                root.header.model = "";
                 stackView.pop();
             }
         }
@@ -154,10 +178,28 @@ ApplicationWindow {
             onRegisterClicked: stackView.push(register)
         }
     }
+
     Component {
         id: register
         Register {
-            onDone: stackView.replace(this, profileInfo)
+            id: register
+            onDone: {
+                settings.imageSource = "";
+                settings.imageSource = imageSource;
+                settings.userName = userName;
+                settings.bio = bio;
+                settings.key = key;
+                settings.firstName = firstName;
+                settings.fatherName = fatherName;
+                settings.phoneNumber = phoneNumber;
+                settings.email = email;
+                settings.gender = gender;
+                settings.studentId = studentId;
+                settings.department = department;
+                settings.registered = true;
+                stackView.clear();
+                stackView.push(profileInfo);
+            }
         }
     }
 }
