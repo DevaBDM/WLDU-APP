@@ -38,6 +38,7 @@ qt_add_qml_module(
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg
   assets/icons/circle-user.svg
+  assets/images/wldu_logo.png
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp

@@ -20,7 +20,7 @@ Item {
         Image {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            source: 'file://home/fedora/Pictures/Woldiya-University-logo.png'
+            source: '../assets/images/wldu_logo.png'
             fillMode: Image.PreserveAspectFit
         }
         Button {
