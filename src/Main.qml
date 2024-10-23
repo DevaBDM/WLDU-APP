@@ -154,20 +154,21 @@ ApplicationWindow {
                     fill: parent
                     margins: 20
                 }
-                model: ObjectModel {
-                    Label {
-                        width: ListView.view.width
-                        text: "Full name: " + settings.firstName + " " + settings.fatherName
+                model: [settings.firstName + " " + settings.fatherName, "+251" + settings.phoneNumber, settings.email, "WDU" + settings.studentId, "Electrical and Computer engineering"]
+                delegate: ItemDelegate {
+                    width: ListView.view.width
+                    text: modelData
+                    leftPadding: 10
+                    MenuSeparator {
+                        anchors {
+                            left: parent.left
+                            leftMargin: 10
+                            right: parent.right
+                            verticalCenter: parent.bottom
                     }
-                    Label {
-                        width: ListView.view.width
-                        text: "Phone: +251" + settings.phoneNumber
-                    }
-                    Label {
-                        width: ListView.view.width
-                        text: "Bio: " + settings.bio
                     }
                 }
+
                 userName: settings.userName
                 source: settings.imageSource
                 ToolButton {
