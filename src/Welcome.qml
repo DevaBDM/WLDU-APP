@@ -1,0 +1,32 @@
+import QtQuick
+import QtQuick.Layouts
+import QtQuick.Controls
+
+Item {
+    signal registerClicked
+    ColumnLayout {
+        anchors.fill: parent
+        Label {
+            Layout.fillWidth: true
+            text: "Welcome!!!"
+            horizontalAlignment: Label.AlignHCenter
+            verticalAlignment: Label.AlignBottom
+            fontSizeMode: Label.Fit
+            minimumPixelSize: 0
+            font {
+                pixelSize: 50
+            }
+        }
+        Image {
+            Layout.fillHeight: true
+            Layout.fillWidth: true
+            source: '../assets/images/wldu_logo.png'
+            fillMode: Image.PreserveAspectFit
+        }
+        Button {
+            text: "Register"
+            Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
+            onClicked: registerClicked()
+        }
+    }
+}

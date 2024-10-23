@@ -5,7 +5,7 @@ import QtQuick.Controls
 Item {
     id: root
     property alias source: ppImage.source
-    property alias fullName: nameLabel.text
+    property alias userName: nameLabel.text
     property alias model: lv.model
     property alias delegate: lv.delegate
     ColumnLayout {
@@ -72,9 +72,9 @@ Item {
                     }
                 }
                 MenuSeparator {
-                    bottomPadding: -2
+                    height: 20
                     anchors {
-                        bottom: parent.bottom
+                        verticalCenter: parent.bottom
                         left: parent.left
                         right: parent.right
                     }
@@ -84,7 +84,6 @@ Item {
 
         ListView {
             id: lv
-            spacing: 4
             clip: true
             Layout.fillWidth: true
             Layout.fillHeight: true

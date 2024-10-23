@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Controls.Material
+import QtQuick.Controls
 import QtQuick.Layouts
 
 Page {
@@ -108,11 +108,20 @@ Page {
         onPaint: {
             var ctx = getContext('2d');
             ctx.save();
+
             ctx.beginPath();
-            ctx.fillStyle = "red";
             ctx.arc(width / 2, height / 2, canvasShade.diameter / 2, 0, 360);
+            ctx.closePath();
             ctx.clip();
+
+            ctx.beginPath();
+            ctx.lineWidth = 4;
+            ctx.arc(width / 2, height / 2, canvasShade.diameter / 2 - 2, 0, 360);
+            ctx.closePath();
+            ctx.stroke();
+
             ctx.drawImage(root.loadSource, flickable.width / 2 - flickable.contentX - x, flickable.height / 2 - flickable.contentY - y, moveImage.width, moveImage.height);
+
             ctx.restore();
         }
         onImageLoaded: {

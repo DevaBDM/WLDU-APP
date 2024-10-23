@@ -28,10 +28,17 @@ qt_add_qml_module(
   src/Profile.qml
   src/EditProfile.qml
   src/CutProfilePic.qml
+  src/Welcome.qml
+  src/Register.qml
+  src/Account_SingUp.qml
+  src/Student_SignUp.qml
+  src/Personal_SignUp.qml
   RESOURCES
+  assets/icons/back.svg
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg
   assets/icons/circle-user.svg
+  assets/images/wldu_logo.png
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp
