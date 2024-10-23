@@ -90,9 +90,27 @@ ApplicationWindow {
         }
     }
 
+    footer: ToolBar {
+        Row {
+            anchors.centerIn: parent
+            ToolButton {
+                icon.source: "../assets/icons/circle-user.svg"
+            }
+        }
+    }
+
     StackView {
         id: stackView
         anchors.fill: parent
+        states: [State {
+            name: "full"
+            PropertyChanges {
+                target: root
+                footer.visible : false
+            }
+        }]
+        state: !!currentItem && currentItem.full ? "full" : ""
+
         Component.onCompleted: if (settings.registered) {
             push(profileInfo);
         } else {
@@ -106,31 +124,38 @@ ApplicationWindow {
 
     Component {
         id: profileInfo
-        Profile {
-            model: ObjectModel {
-                Label {
-                    width: ListView.view.width
-                    text: "Full name: " + settings.firstName + " " + settings.fatherName
-                }
-                Label {
-                    width: ListView.view.width
-                    text: "Phone: +251" + settings.phoneNumber
-                }
-                Label {
-                    width: ListView.view.width
-                    text: "Bio: " + settings.bio
-                }
-            }
-            userName: settings.userName
-            source: settings.imageSource
-            ToolButton {
-                icon.source: "../assets/icons/edit-profile.svg"
+        Item {
+            property bool full: false
+            Profile {
                 anchors {
-                    right: parent.right
-                    top: parent.top
+                    fill: parent
+                    margins: 20
                 }
-                onClicked: {
-                    stackView.push(editProfile);
+                model: ObjectModel {
+                    Label {
+                        width: ListView.view.width
+                        text: "Full name: " + settings.firstName + " " + settings.fatherName
+                    }
+                    Label {
+                        width: ListView.view.width
+                        text: "Phone: +251" + settings.phoneNumber
+                    }
+                    Label {
+                        width: ListView.view.width
+                        text: "Bio: " + settings.bio
+                    }
+                }
+                userName: settings.userName
+                source: settings.imageSource
+                ToolButton {
+                    icon.source: "../assets/icons/edit-profile.svg"
+                    anchors {
+                        right: parent.right
+                        top: parent.top
+                    }
+                    onClicked: {
+                        stackView.push(editProfile);
+                    }
                 }
             }
         }
@@ -140,6 +165,7 @@ ApplicationWindow {
         id: editProfile
         Register {
             id: register
+            property bool full: true
             imageSource: settings.imageSource
             userName: settings.userName
             bio: settings.bio
@@ -175,6 +201,7 @@ ApplicationWindow {
     Component {
         id: welcome
         Welcome {
+            property bool full: true
             onRegisterClicked: stackView.push(register)
         }
     }
@@ -183,6 +210,7 @@ ApplicationWindow {
         id: register
         Register {
             id: register
+            property bool full: true
             onDone: {
                 settings.imageSource = "";
                 settings.imageSource = imageSource;
