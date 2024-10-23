@@ -32,6 +32,8 @@ ApplicationWindow {
         property real studentId
         property string department
         property bool registered: false
+
+        property alias currentHome: swipeViewHome.currentIndex
     }
 
     header: ToolBar {
@@ -93,28 +95,49 @@ ApplicationWindow {
     footer: ToolBar {
         Row {
             anchors.centerIn: parent
-            ToolButton {
-                icon.source: "../assets/icons/circle-user.svg"
+            Repeater {
+                model: ListModel {
+                    ListElement {
+                        name: "Profile"
+                        iconSource: "../assets/icons/circle-user.svg"
+                    }
+                }
+                ToolButton {
+                    required property real index
+                    required property string name
+                    required property url iconSource
+
+                    icon.source: iconSource
+                    display: index == swipeViewHome.currentIndex ? ToolButton.TextUnderIcon : ToolButton.IconOnly
+                    text: name
+                    onClicked: swipeViewHome.currentIndex = index
+                    opacity: index == swipeViewHome.currentIndex ? 1 : 0.7
+                }
             }
         }
     }
 
-    StackView {
-        id: stackView
+    SwipeView {
+        id: swipeViewHome
         anchors.fill: parent
-        states: [State {
-            name: "full"
-            PropertyChanges {
-                target: root
-                footer.visible : false
-            }
-        }]
-        state: !!currentItem && currentItem.full ? "full" : ""
+        StackView {
+            id: stackView
+            states: [
+                State {
+                    name: "full"
+                    PropertyChanges {
+                        target: root
+                        footer.visible: false
+                    }
+                }
+            ]
+            state: !!currentItem && currentItem.full ? "full" : ""
 
-        Component.onCompleted: if (settings.registered) {
-            push(profileInfo);
-        } else {
-            push(welcome);
+            Component.onCompleted: if (settings.registered) {
+                push(profileInfo);
+            } else {
+                push(welcome);
+            }
         }
     }
 
