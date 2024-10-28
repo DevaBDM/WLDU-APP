@@ -33,12 +33,18 @@ qt_add_qml_module(
   src/Account_SingUp.qml
   src/Student_SignUp.qml
   src/Personal_SignUp.qml
+  src/Schedule/Schedule.qml
   RESOURCES
   assets/icons/back.svg
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg
   assets/icons/circle-user.svg
   assets/images/wldu_logo.png
+  assets/icons/schedule.svg
+  assets/icons/angle-left.svg
+  assets/icons/angle-right.svg
+  assets/icons/question.svg
+  assets/icons/check.svg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp
