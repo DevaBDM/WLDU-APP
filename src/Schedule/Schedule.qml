@@ -221,10 +221,10 @@ ListView {
             required property string startTime
             required property string endTime
             required property string title
-            required property string description
+            required property string shortNote
             required property string teacherName
             required property url teacherPP
-            required property string note
+            required property string description
             required property string type
             required property string outlineSource
             required property real attachments
@@ -287,14 +287,14 @@ ListView {
                         Layout.maximumWidth: 60
                         Layout.minimumWidth: 25
                         Layout.fillWidth: true
-                        Layout.rowSpan: note == "" ? 2 : 3
+                        Layout.rowSpan: description == "" ? 2 : 3
                         elide: Label.ElideRight
                         text: type
                     }
                     Label {
                         Layout.fillWidth: true
                         elide: Label.ElideRight
-                        text: description
+                        text: shortNote
                     }
                     ToolButton {
                         Layout.alignment: Qt.AlignRight
@@ -305,7 +305,7 @@ ListView {
                     Label {
                         Layout.fillWidth: true
                         elide: Label.ElideRight
-                        text: note
+                        text: description
                     }
                 }
             }
