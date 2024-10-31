@@ -108,6 +108,109 @@ ListView {
                     }
                 }
             }
+            Item {
+                Layout.fillWidth: true
+                implicitHeight: 7
+            }
+        }
+    }
+
+    Component {
+        id: lvDelegate
+        RowLayout {
+            width: ListView.view.width
+            required property real index
+            required property string startTime
+            required property string endTime
+            required property string title
+            required property string description
+            required property string teacherName
+            required property url teacherPP
+            required property string note
+            required property string type
+            required property string outlineSource
+            required property real attachments
+            required property string status
+            required property bool seen
+
+            spacing: 10
+            Column {
+                Layout.fillHeight: true
+                spacing: 10
+                Label {
+                    text: startTime
+                    font {
+                        bold: true
+                        pixelSize: 20
+                    }
+                }
+                Label {
+                    text: endTime
+                }
+            }
+            ColumnLayout {
+                Layout.preferredWidth: 1
+                Layout.minimumWidth: 10
+                Layout.maximumWidth: 20
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                Rectangle {
+                    Layout.fillWidth: true
+                    implicitHeight: width
+                    radius: width / 2
+                    color: "blue"
+                }
+                Rectangle {
+                    Layout.fillHeight: true
+                    Layout.bottomMargin: 5
+                    Layout.alignment: Qt.AlignHCenter
+                    implicitWidth: 2
+                    color: "blue"
+                }
+            }
+            Button {
+                Layout.preferredWidth: 150
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                clip: true
+                contentItem: GridLayout {
+                    columns: 2
+                    Label {
+                        text: title
+                        Layout.fillWidth: true
+                        elide: Label.ElideRight
+                        font {
+                            bold: true
+                            pixelSize: 20
+                        }
+                    }
+                    Label {
+                        Layout.alignment: Qt.AlignRight
+                        Layout.maximumWidth: 60
+                        Layout.minimumWidth: 25
+                        Layout.fillWidth: true
+                        Layout.rowSpan: note == "" ? 2 : 3
+                        elide: Label.ElideRight
+                        text: type
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        elide: Label.ElideRight
+                        text: description
+                    }
+                    ToolButton {
+                        Layout.alignment: Qt.AlignRight
+                        Layout.fillWidth: true
+                        icon.source: teacherPP
+                        text: teacherName
+                    }
+                    Label {
+                        Layout.fillWidth: true
+                        elide: Label.ElideRight
+                        text: note
+                    }
+                }
+            }
         }
     }
 }
