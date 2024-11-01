@@ -26,6 +26,7 @@ class Schedule_Model : public QAbstractListModel {
     Q_PROPERTY(QVariant seen READ seen NOTIFY seenChanged)
 
     Q_PROPERTY(QVariant date READ date NOTIFY dateChanged)
+    Q_PROPERTY(QVariant weekDay READ weekDay NOTIFY dateChanged)
   public:
     explicit Schedule_Model(QObject *parent = nullptr);
     enum Role {
@@ -66,12 +67,14 @@ class Schedule_Model : public QAbstractListModel {
     QVariant status() const;
     QVariant seen() const;
     QVariant date() const;
+    QVariant weekDay() const;
 
   public slots:
     void setFilter();
     void nextDay();
     void previousDay();
     void currentDate();
+    void setWeekDay(int week);
 
   signals:
     void currentRowChanged(int);

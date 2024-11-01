@@ -163,6 +163,20 @@ QVariant Schedule_Model::seen() const { return {}; }
 
 QVariant Schedule_Model::date() const { return m_date.toString("dd MMMM"); }
 
+QVariant Schedule_Model::weekDay() const {
+    int weekDay = m_date.dayOfWeek();
+    if (weekDay == 0)
+        return {};
+    return (weekDay - 1) % 7;
+}
+
+void Schedule_Model::setWeekDay(int week) {
+    int currentWeek{weekDay().toInt()};
+    int wK{week - currentWeek};
+    m_date = m_date.addDays(wK);
+    emit dateChanged();
+}
+
 void Schedule_Model::currentDate() {
     if (m_date == QDate::currentDate())
         return;

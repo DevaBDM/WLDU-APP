@@ -6,7 +6,6 @@ import com.schedule.db
 ListView {
     id: root
     property var date: new Date()
-    property real currentCol
     header: lvHeader
 
     populate: Transition {
@@ -129,7 +128,6 @@ ListView {
                     icon.source: "/qt/qml/WLDU/assets/icons/angle-left.svg"
                     onClicked: {
                         ScheduleModel.previousDay();
-                        root.currentCol <= 0 ? root.currentCol = 6 : root.currentCol--;
                     }
                 }
                 Label {
@@ -142,43 +140,33 @@ ListView {
                     icon.source: "/qt/qml/WLDU/assets/icons/angle-right.svg"
                     onClicked: {
                         ScheduleModel.nextDay();
-                        root.currentCol >= 6 ? root.currentCol = 0 : root.currentCol++;
                     }
                 }
             }
-            ListView {
-                id: lv
+            RowLayout {
                 Layout.fillWidth: true
-                implicitHeight: currentItem.height
-                orientation: Qt.Horizontal
-                snapMode: ListView.SnapOneItem
-                model: 1
-                clip: true
-
-                delegate: RowLayout {
-                    width: ListView.view.width
-                    Repeater {
-                        model: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
-                        Column {
-                            Layout.fillWidth: true
-                            Layout.alignment: Qt.AlignHCenter
-                            ToolButton {
-                                text: modelData + "\n" + index
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                onClicked: root.currentCol = index
-                                opacity: index == root.currentCol ? 1 : 0.7
-                            }
-                            Rectangle {
-                                implicitWidth: parent.width / 2
-                                anchors.horizontalCenter: parent.horizontalCenter
-                                visible: index == root.currentCol
-                                implicitHeight: 4
-                                color: "blue"
-                            }
+                Repeater {
+                    model: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                    Column {
+                        Layout.fillWidth: true
+                        Layout.alignment: Qt.AlignHCenter
+                        ToolButton {
+                            text: modelData // + "\n" + index
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            onClicked: ScheduleModel.setWeekDay(index)
+                            opacity: index == ScheduleModel.weekDay ? 1 : 0.7
+                        }
+                        Rectangle {
+                            implicitWidth: parent.width / 2
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            visible: index == ScheduleModel.weekDay
+                            implicitHeight: 4
+                            color: "blue"
                         }
                     }
                 }
             }
+
             Item {
                 Layout.fillWidth: true
                 implicitHeight: 7

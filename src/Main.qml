@@ -35,7 +35,6 @@ ApplicationWindow {
         property bool registered: false
 
         property alias currentHome: swipeViewHome.currentIndex
-        property alias currentCol: schedule.currentCol
     }
 
     header: ToolBar {
