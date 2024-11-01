@@ -3,11 +3,11 @@
 Schedule_Model::Schedule_Model(QObject *parent)
     : QAbstractListModel(parent),
       m_db{QSqlDatabase::addDatabase("QSQLITE", "Schedule")},
-      m_sqlTable(parent, m_db), m_currentRow(0) {
+      m_sqlTable(parent, m_db), m_currentRow(0), m_date(QDate::currentDate()) {
     m_db.setDatabaseName("schedule.db");
     m_db.open();
     m_sqlTable.setTable("ScheduleModel");
-    setFilter(0);
+    setFilter();
     connect(this, &Schedule_Model::currentRowChanged, this,
             &Schedule_Model::titleChanged);
     connect(this, &Schedule_Model::currentRowChanged, this,
@@ -32,6 +32,8 @@ Schedule_Model::Schedule_Model(QObject *parent)
             &Schedule_Model::statusChanged);
     connect(this, &Schedule_Model::currentRowChanged, this,
             &Schedule_Model::seenChanged);
+    connect(this, &Schedule_Model::dateChanged, this,
+            &Schedule_Model::setFilter);
 }
 
 int Schedule_Model::rowCount(const QModelIndex &parent) const {
@@ -90,14 +92,22 @@ QVariant Schedule_Model::data(const QModelIndex &index, int role) const {
     return {};
 }
 
-void Schedule_Model::setFilter(int week) {
-    if (m_week == week)
-        return;
-    m_week = week;
+void Schedule_Model::setFilter() {
     beginResetModel();
-    m_sqlTable.setFilter("weekday = " + QString::number(week));
+    m_sqlTable.setFilter("weekday = strftime('%w','" +
+                         m_date.toString("yyyy-MM-dd") + "')" +
+                         " OR onceDate = " + m_date.toString("yyyy-MM-dd"));
     m_sqlTable.select();
     endResetModel();
+}
+
+void Schedule_Model::nextDay() {
+    m_date = m_date.addDays(1);
+    emit dateChanged();
+}
+void Schedule_Model::previousDay() {
+    m_date = m_date.addDays(-1);
+    emit dateChanged();
 }
 
 int Schedule_Model::currentRow() const { return m_currentRow; }
@@ -150,3 +160,12 @@ QVariant Schedule_Model::scheduleID() const {
 QVariant Schedule_Model::status() const { return {}; }
 
 QVariant Schedule_Model::seen() const { return {}; }
+
+QVariant Schedule_Model::date() const { return m_date.toString("dd MMMM"); }
+
+void Schedule_Model::currentDate() {
+    if (m_date == QDate::currentDate())
+        return;
+    m_date = QDate::currentDate();
+    emit dateChanged();
+}

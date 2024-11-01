@@ -7,7 +7,6 @@ ListView {
     id: root
     property var date: new Date()
     property real currentCol
-    onCurrentColChanged: ScheduleModel.setFilter(currentCol)
     header: lvHeader
 
     populate: Transition {
@@ -101,6 +100,7 @@ ListView {
                     ToolButton {
                         id: todayTB
                         text: "Today"
+                        onClicked: ScheduleModel.currentDate()
                         font {
                             bold: true
                         }
@@ -127,17 +127,23 @@ ListView {
                 ToolButton {
                     id: privouseTB
                     icon.source: "/qt/qml/WLDU/assets/icons/angle-left.svg"
-                    onClicked: root.currentCol <= 0 ? root.currentCol = 6 : root.currentCol--
+                    onClicked: {
+                        ScheduleModel.previousDay();
+                        root.currentCol <= 0 ? root.currentCol = 6 : root.currentCol--;
+                    }
                 }
                 Label {
                     Layout.fillWidth: true
                     horizontalAlignment: Label.AlignHCenter
-                    text: root.currentCol + " September"
+                    text: ScheduleModel.date
                 }
                 ToolButton {
                     id: nextTB
                     icon.source: "/qt/qml/WLDU/assets/icons/angle-right.svg"
-                    onClicked: root.currentCol >= 6 ? root.currentCol = 0 : root.currentCol++
+                    onClicked: {
+                        ScheduleModel.nextDay();
+                        root.currentCol >= 6 ? root.currentCol = 0 : root.currentCol++;
+                    }
                 }
             }
             ListView {

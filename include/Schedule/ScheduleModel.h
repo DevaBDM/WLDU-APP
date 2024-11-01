@@ -2,6 +2,7 @@
 #define INCLUDE_SRC_SCHEDULEMODEL_H_
 
 #include <QAbstractListModel>
+#include <QDate>
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlRecord>
@@ -23,6 +24,8 @@ class Schedule_Model : public QAbstractListModel {
     Q_PROPERTY(QVariant scheduleID READ scheduleID NOTIFY scheduleIDChanged)
     Q_PROPERTY(QVariant status READ status NOTIFY statusChanged)
     Q_PROPERTY(QVariant seen READ seen NOTIFY seenChanged)
+
+    Q_PROPERTY(QVariant date READ date NOTIFY dateChanged)
   public:
     explicit Schedule_Model(QObject *parent = nullptr);
     enum Role {
@@ -62,9 +65,13 @@ class Schedule_Model : public QAbstractListModel {
     QVariant scheduleID() const;
     QVariant status() const;
     QVariant seen() const;
+    QVariant date() const;
 
   public slots:
-    void setFilter(int week);
+    void setFilter();
+    void nextDay();
+    void previousDay();
+    void currentDate();
 
   signals:
     void currentRowChanged(int);
@@ -81,12 +88,13 @@ class Schedule_Model : public QAbstractListModel {
     void scheduleIDChanged();
     void statusChanged();
     void seenChanged();
+    void dateChanged();
 
   private:
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTable;
-    int m_week;
     int m_currentRow;
+    QDate m_date;
 };
 
 #endif // INCLUDE_SRC_SCHEDULEMODEL_H_
