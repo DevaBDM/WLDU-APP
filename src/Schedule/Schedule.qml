@@ -17,6 +17,66 @@ ListView {
         }
     }
 
+    Drawer {
+        id: drawerInfo
+        width: parent.width
+        height: parent.height
+        edge: Qt.BottomEdge
+        ScrollView {
+            anchors.fill: parent
+            contentWidth: parent.width
+            ColumnLayout {
+                id: infoPaneLayout
+                anchors {
+                    fill: parent
+                    leftMargin: 20
+                    rightMargin: 20
+                }
+                spacing: 10
+                property var currentSchedule: 0
+                Label {
+                    Layout.fillWidth: true
+                    text: !!ScheduleModel.title ? ScheduleModel.title : ""
+                    fontSizeMode: Label.VerticalFit
+                    elide: Label.ElideRight
+                    font {
+                        pixelSize: 50
+                        bold: true
+                    }
+                }
+                Label {
+                    Layout.fillWidth: true
+                    elide: Label.ElideRight
+                    text: ScheduleModel.startTime + " am - " + ScheduleModel.endTime + " pm"
+                }
+                ToolButton {
+                    Layout.fillWidth: true
+                    icon.source: ScheduleModel.teacherPP
+                    text: !!ScheduleModel.teacherName ? ScheduleModel.teacherName : ""
+                }
+                Label {
+                    Layout.fillWidth: true
+                    text: !!ScheduleModel.shortNote ? "Description" : "No description !!"
+                    elide: Label.ElideRight
+                    font {
+                        pixelSize: 30
+                        bold: true
+                    }
+                }
+                Label {
+                    Layout.fillWidth: true
+                    elide: Label.ElideRight
+                    text: !!ScheduleModel.shortNote ? ScheduleModel.shortNote : ""
+                }
+                Label {
+                    Layout.fillWidth: true
+                    text: !!ScheduleModel.description ? ScheduleModel.description : ""
+                    wrapMode: Label.Wrap
+                }
+            }
+        }
+    }
+
     model: ScheduleModel
     delegate: lvDelegate
 
@@ -176,6 +236,10 @@ ListView {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 clip: true
+                onClicked: {
+                    ScheduleModel.currentRow = index;
+                    drawerInfo.open();
+                }
                 contentItem: GridLayout {
                     columns: 2
                     Label {
