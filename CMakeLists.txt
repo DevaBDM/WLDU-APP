@@ -46,6 +46,7 @@ qt_add_qml_module(
   assets/icons/angle-right.svg
   assets/icons/question.svg
   assets/icons/check.svg
+  assets/icons/teacher.svg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp

@@ -84,7 +84,7 @@ QVariant Schedule_Model::data(const QModelIndex &index, int role) const {
     case scheduleIDRole:
         return m_sqlTable.record(row).value("pk_Schedule");
     case teacherPPRole:
-        return "qrc:/qt/qml/WLDU/assets/icons/circle-user.svg";
+        return "qrc:/qt/qml/WLDU/assets/icons/teacher.svg";
     case statusRole:
     case seenRole:
         break;
