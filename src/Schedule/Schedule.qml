@@ -1,11 +1,13 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import com.schedule.db
 
 ListView {
     id: root
     property var date: new Date()
     property real currentCol
+    onCurrentColChanged: ScheduleModel.setFilter(currentCol)
     header: lvHeader
 
     populate: Transition {
@@ -15,103 +17,8 @@ ListView {
         }
     }
 
-    Drawer {
-        id: drawerInfo
-        width: parent.width
-        height: parent.height
-        edge: Qt.BottomEdge
-        ScrollView {
-            anchors.fill: parent
-            contentWidth: parent.width
-            ColumnLayout {
-                id: infoPaneLayout
-                anchors {
-                    fill: parent
-                    leftMargin: 20
-                    rightMargin: 20
-                }
-                spacing: 10
-                property var currentSchedule: 0
-                Label {
-                    Layout.fillWidth: true
-                    text: root.model.get(parent.currentSchedule).title
-                    fontSizeMode: Label.VerticalFit
-                    elide: Label.ElideRight
-                    font {
-                        pixelSize: 50
-                        bold: true
-                    }
-                }
-                Label {
-                    Layout.fillWidth: true
-                    elide: Label.ElideRight
-                    text: root.model.get(parent.currentSchedule).startTime + " am - " + root.model.get(parent.currentSchedule).startTime + " pm"
-                }
-                Label {
-                    Layout.fillWidth: true
-                    text: root.model.get(parent.currentSchedule).shortNote != "" ? "Description" : "No description !!"
-                    elide: Label.ElideRight
-                    font {
-                        pixelSize: 30
-                        bold: true
-                    }
-                }
-                Label {
-                    Layout.fillWidth: true
-                    elide: Label.ElideRight
-                    text: root.model.get(parent.currentSchedule).description
-                }
-                Label {
-                    Layout.fillWidth: true
-                    text: root.model.get(parent.currentSchedule).note
-                    wrapMode: Label.Wrap
-                }
-                Label {
-                    Layout.fillWidth: true
-                    elide: Label.ElideRight
-                    text: root.model.get(parent.currentSchedule).source != "" ? "Outline" : "No outline available !!"
-                    font {
-                        pixelSize: 30
-                        bold: true
-                    }
-                }
-                Flickable {
-                    interactive: false
-                    Layout.margins: 20
-                    Layout.fillWidth: true
-                    Layout.fillHeight: true
-                    Layout.preferredHeight: 4
-                    Layout.minimumHeight: outlineImage.height / 2
-                    Layout.maximumHeight: 500
-
-                    contentWidth: outlineImage.width
-                    contentHeight: outlineImage.height
-                    clip: true
-                    PinchHandler {
-                        id: pH
-                        target: parent
-                        rotationAxis.enabled: false
-                        scaleAxis.maximum: 5
-                        scaleAxis.minimum: 0.5
-                    }
-                    Image {
-                        id: outlineImage
-                        horizontalAlignment: Image.AlignHCenter
-                        source: root.model.get(parent.currentSchedule).outlineSource
-                    }
-                }
-                Label {
-                    Layout.fillWidth: true
-                    text: root.model.get(parent.currentSchedule).attachments != "" ? "Attachments" : "No attachments !!"
-                    elide: Label.ElideRight
-                    font {
-                        pixelSize: 30
-                        bold: true
-                    }
-                }
-            }
-        }
-    }
+    model: ScheduleModel
+    delegate: lvDelegate
 
     Component {
         id: lvHeader
@@ -185,7 +92,7 @@ ListView {
                 delegate: RowLayout {
                     width: ListView.view.width
                     Repeater {
-                        model: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+                        model: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
                         Column {
                             Layout.fillWidth: true
                             Layout.alignment: Qt.AlignHCenter
@@ -226,8 +133,6 @@ ListView {
             required property url teacherPP
             required property string description
             required property string type
-            required property string outlineSource
-            required property real attachments
             required property string status
             required property bool seen
 

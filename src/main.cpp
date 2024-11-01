@@ -1,3 +1,4 @@
+#include "Schedule/ScheduleModel.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 
@@ -10,6 +11,11 @@ int main(int argc, char *argv[]) {
     QGuiApplication::setOrganizationName("DevaBDM");
     QGuiApplication::setApplicationVersion("0.0.1");
     QGuiApplication::setOrganizationDomain("org");
+
+    Schedule_Model scheduleModel;
+
+    qmlRegisterSingletonInstance("com.schedule.db", 1, 0, "ScheduleModel",
+                                 &scheduleModel);
 
     QQmlApplicationEngine engine;
     QObject::connect(
