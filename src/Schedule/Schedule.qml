@@ -7,6 +7,14 @@ ListView {
     id: root
     property var date: new Date()
     header: lvHeader
+    Timer {
+        id: timer
+        interval: (ScheduleModel.networkStatus == ScheduleModel.Waiting || ScheduleModel.networkStatus == ScheduleModel.Error ? 4 : 30 * 60) * 1000
+        repeat: true
+        running: true
+        triggeredOnStart: true
+        onTriggered: ScheduleModel.fetch()
+    }
 
     populate: Transition {
         NumberAnimation {
@@ -112,8 +120,30 @@ ListView {
                 }
 
                 ToolButton {
-                    icon.source: "/qt/qml/WLDU/assets/icons/check.svg"
-                    text: "Connected"
+                    enabled: {
+                        switch (ScheduleModel.networkStatus) {
+                        case ScheduleModel.Connected:
+                        case ScheduleModel.Error:
+                        case ScheduleModel.Waiting:
+                            return true;
+                        default:
+                            return false;
+                        }
+                    }
+                    icon.source: {
+                        switch (ScheduleModel.networkStatus) {
+                        case ScheduleModel.Connected:
+                            "/qt/qml/WLDU/assets/icons/circle-check.svg";
+                            break;
+                        case ScheduleModel.Error:
+                            "/qt/qml/WLDU/assets/icons/circle-exclamation.svg";
+                            break;
+                        default:
+                            "/qt/qml/WLDU/assets/icons/arrow-rotate.svg";
+                        }
+                    }
+                    text: ScheduleModel.networkMessage(ScheduleModel.networkStatus)
+                    onClicked: ScheduleModel.fetch()
                 }
 
                 ToolButton {

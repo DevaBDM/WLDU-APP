@@ -1,4 +1,6 @@
 #include "Schedule/ScheduleModel.h"
+#include <QFile>
+#include <QNetworkRequest>
 
 Schedule_Model::Schedule_Model(QObject *parent)
     : QAbstractListModel(parent),
@@ -32,8 +34,24 @@ Schedule_Model::Schedule_Model(QObject *parent)
             &Schedule_Model::statusChanged);
     connect(this, &Schedule_Model::currentRowChanged, this,
             &Schedule_Model::seenChanged);
+
     connect(this, &Schedule_Model::dateChanged, this,
             &Schedule_Model::setFilter);
+
+    connect(this, &Schedule_Model::epochChanged, this,
+            &Schedule_Model::downloadScheduleDB);
+
+    QFile file("schedule.dbEPOCH");
+    file.open(QFile::ReadOnly);
+    m_epoch = file.readAll().toInt();
+    file.close();
+
+    connect(&m_nm, &QNetworkAccessManager::finished, [](QNetworkReply *reply) {
+        reply->deleteLater(); //
+    });
+
+    setNetworkStatus(NetworkStatus::Waiting);
+    fetch();
 }
 
 int Schedule_Model::rowCount(const QModelIndex &parent) const {
@@ -117,6 +135,41 @@ void Schedule_Model::setCurrentRow(int row) {
     emit currentRowChanged(row);
 }
 
+void Schedule_Model::downloadScheduleDB() {
+
+    QNetworkRequest nq{QUrl{"http://localhost/http/schedule.db"}};
+    QNetworkReply *reply = m_nm.get(nq);
+
+    connect(reply, &QNetworkReply::errorOccurred,
+            [=](QNetworkReply::NetworkError error) {
+                switch (error) {
+                case QNetworkReply::HostNotFoundError:
+                    setNetworkStatus(NetworkStatus::Waiting);
+                    break;
+                default:
+                    setNetworkStatus(NetworkStatus::Error);
+                }
+            });
+
+    setNetworkStatus(NetworkStatus::Downloading);
+    connect(reply, &QNetworkReply::finished, this, [&, reply]() {
+        if (reply->error() != QNetworkReply::NoError)
+            return;
+
+        m_db.close();
+
+        QFile file("schedule.db");
+        file.open(QFile::WriteOnly);
+        file.write(reply->readAll());
+        file.close();
+
+        m_db.open();
+
+        setFilter();
+        setNetworkStatus(NetworkStatus::Connected);
+    });
+}
+
 QVariant Schedule_Model::startTime() const {
     return data(index(m_currentRow), startTimeRole);
 }
@@ -182,4 +235,74 @@ void Schedule_Model::currentDate() {
         return;
     m_date = QDate::currentDate();
     emit dateChanged();
+}
+
+Schedule_Model::NetworkStatus Schedule_Model::networkStatus() const {
+    return m_networkStatus;
+}
+
+void Schedule_Model::setNetworkStatus(NetworkStatus message) {
+    if (message == m_networkStatus)
+        return;
+    m_networkStatus = message;
+    emit networkStatusChanged();
+}
+
+void Schedule_Model::fetch() {
+    QNetworkReply *reply = m_nm.get(
+        QNetworkRequest{QUrl{"http://localhost/http/schedule.dbEPOCH"}});
+
+    connect(reply, &QNetworkReply::finished, [&, reply]() {
+        if (reply->error() == QNetworkReply::NoError) {
+            int epoch{reply->readAll().toInt()};
+            setEpoch(epoch);
+            setNetworkStatus(NetworkStatus::Connected);
+        }
+    });
+    connect(reply, &QNetworkReply::socketStartedConnecting,
+            [&]() { setNetworkStatus(NetworkStatus::Connecting); });
+    connect(reply, &QNetworkReply::requestSent,
+            [&]() { setNetworkStatus(NetworkStatus::Requesting); });
+    connect(reply, &QNetworkReply::redirected,
+            [&]() { setNetworkStatus(NetworkStatus::Redirected); });
+    connect(reply, &QNetworkReply::metaDataChanged,
+            [&]() { setNetworkStatus(NetworkStatus::Receiving); });
+    connect(reply, &QNetworkReply::errorOccurred,
+            [=](QNetworkReply::NetworkError error) {
+                switch (error) {
+                case QNetworkReply::HostNotFoundError:
+                    setNetworkStatus(NetworkStatus::Waiting);
+                    break;
+                default:
+                    setNetworkStatus(NetworkStatus::Error);
+                }
+            });
+}
+
+QString Schedule_Model::networkMessage(NetworkStatus id) const {
+    static QHash<NetworkStatus, QString> message{
+        {NetworkStatus::Connecting, "Connecting..."},
+        {NetworkStatus::Requesting, "Requesting..."},
+        {NetworkStatus::Redirected, "Redirected"},
+        {NetworkStatus::Receiving, "Receiving..."},
+        {NetworkStatus::Connected, "Connected"},
+        {NetworkStatus::Downloading, "Downloading..."},
+        {NetworkStatus::Waiting, "Waitting for network..."},
+        {NetworkStatus::Error, "Network error"}};
+
+    return message[id];
+}
+
+int Schedule_Model::epoch() const { return m_epoch; }
+
+void Schedule_Model::setEpoch(int epoch) {
+    if (epoch == m_epoch)
+        return;
+    m_epoch = epoch;
+    emit epochChanged();
+
+    QFile file("schedule.dbEPOCH");
+    file.open(QFile::WriteOnly);
+    file.write(QByteArray::number(m_epoch));
+    file.close();
 }

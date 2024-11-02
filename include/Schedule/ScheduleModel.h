@@ -3,6 +3,8 @@
 
 #include <QAbstractListModel>
 #include <QDate>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlRecord>
@@ -27,10 +29,12 @@ class Schedule_Model : public QAbstractListModel {
 
     Q_PROPERTY(QVariant date READ date NOTIFY dateChanged)
     Q_PROPERTY(QVariant weekDay READ weekDay NOTIFY dateChanged)
+    Q_PROPERTY(NetworkStatus networkStatus READ networkStatus NOTIFY
+                   networkStatusChanged)
   public:
     explicit Schedule_Model(QObject *parent = nullptr);
     enum Role {
-        startTimeRole,
+        startTimeRole = Qt::UserRole + 1,
         endTimeRole,
         titleRole,
         shortNoteRole,
@@ -43,6 +47,17 @@ class Schedule_Model : public QAbstractListModel {
         statusRole,
         seenRole
     };
+    enum class NetworkStatus {
+        Connecting,
+        Requesting,
+        Redirected,
+        Receiving,
+        Connected,
+        Downloading,
+        Waiting,
+        Error
+    };
+    Q_ENUM(NetworkStatus)
 
     int rowCount(const QModelIndex &parent = QModelIndex{}) const override;
 
@@ -53,6 +68,8 @@ class Schedule_Model : public QAbstractListModel {
     // properties
     int currentRow() const;
     void setCurrentRow(int row);
+    void setNetworkStatus(NetworkStatus);
+    void setEpoch(int);
 
     QVariant startTime() const;
     QVariant endTime() const;
@@ -68,6 +85,9 @@ class Schedule_Model : public QAbstractListModel {
     QVariant seen() const;
     QVariant date() const;
     QVariant weekDay() const;
+    NetworkStatus networkStatus() const;
+
+    void downloadScheduleDB();
 
   public slots:
     void setFilter();
@@ -75,6 +95,9 @@ class Schedule_Model : public QAbstractListModel {
     void previousDay();
     void currentDate();
     void setWeekDay(int week);
+    void fetch();
+    QString networkMessage(NetworkStatus) const;
+    int epoch() const;
 
   signals:
     void currentRowChanged(int);
@@ -92,12 +115,17 @@ class Schedule_Model : public QAbstractListModel {
     void statusChanged();
     void seenChanged();
     void dateChanged();
+    void networkStatusChanged();
+    void epochChanged();
 
   private:
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTable;
     int m_currentRow;
     QDate m_date;
+    NetworkStatus m_networkStatus;
+    QNetworkAccessManager m_nm;
+    int m_epoch;
 };
 
 #endif // INCLUDE_SRC_SCHEDULEMODEL_H_
