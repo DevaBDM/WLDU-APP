@@ -2,6 +2,7 @@ import QtQuick
 import QtCore
 import QtQuick.Layouts
 import QtQuick.Controls
+import "Schedule"
 
 ApplicationWindow {
     id: root
@@ -98,6 +99,10 @@ ApplicationWindow {
             Repeater {
                 model: ListModel {
                     ListElement {
+                        name: "Schedule"
+                        iconSource: "../assets/icons/schedule.svg"
+                    }
+                    ListElement {
                         name: "Profile"
                         iconSource: "../assets/icons/circle-user.svg"
                     }
@@ -120,6 +125,13 @@ ApplicationWindow {
     SwipeView {
         id: swipeViewHome
         anchors.fill: parent
+        Pane {
+            Schedule {
+                id: schedule
+                anchors.fill: parent
+                anchors.margins: 5
+            }
+        }
         StackView {
             id: stackView
             states: [

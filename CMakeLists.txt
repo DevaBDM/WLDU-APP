@@ -10,12 +10,13 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Quick)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Quick Sql)
 qt_policy(SET QTP0001 NEW)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
-qt_add_executable(appWLDU src/main.cpp)
+qt_add_executable(appWLDU src/main.cpp include/Schedule/ScheduleModel.h
+                  src/Schedule/ScheduleModel.cpp)
 
 qt_add_qml_module(
   appWLDU
@@ -33,12 +34,22 @@ qt_add_qml_module(
   src/Account_SingUp.qml
   src/Student_SignUp.qml
   src/Personal_SignUp.qml
+  src/Schedule/Schedule.qml
   RESOURCES
   assets/icons/back.svg
   assets/icons/edit-profile.svg
   assets/icons/user-large.svg
   assets/icons/circle-user.svg
   assets/images/wldu_logo.png
+  assets/icons/schedule.svg
+  assets/icons/angle-left.svg
+  assets/icons/angle-right.svg
+  assets/icons/question.svg
+  assets/icons/check.svg
+  assets/icons/teacher.svg
+  assets/icons/circle-check.svg
+  assets/icons/circle-exclamation.svg
+  assets/icons/arrow-rotate.svg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp
@@ -46,7 +57,7 @@ qt_add_qml_module(
 )
 
 target_include_directories(appWLDU PRIVATE include qmltypes/include)
-target_link_libraries(appWLDU PRIVATE Qt6::Quick)
+target_link_libraries(appWLDU PRIVATE Qt6::Quick Qt6::Sql)
 
 add_custom_target(
   Run
