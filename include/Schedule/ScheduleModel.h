@@ -126,6 +126,7 @@ class Schedule_Model : public QAbstractListModel {
     NetworkStatus m_networkStatus;
     QNetworkAccessManager m_nm;
     int m_epoch;
+    QString m_filter;
 };
 
 #endif // INCLUDE_SRC_SCHEDULEMODEL_H_

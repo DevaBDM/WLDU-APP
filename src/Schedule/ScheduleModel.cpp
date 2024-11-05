@@ -5,7 +5,11 @@
 Schedule_Model::Schedule_Model(QObject *parent)
     : QAbstractListModel(parent),
       m_db{QSqlDatabase::addDatabase("QSQLITE", "Schedule")},
-      m_sqlTable(parent, m_db), m_currentRow(0), m_date(QDate::currentDate()) {
+      m_sqlTable(parent, m_db), m_currentRow(0), m_date(QDate::currentDate()),
+      m_filter{
+          "(beginDate <= '%1' OR beginDate IS NULL) AND (expireDate > '%1' "
+          "OR expireDate IS NULL) AND weekday = strftime('%w','%1') OR "
+          "onceDate = '%1'"} {
     m_db.setDatabaseName("schedule.db");
     m_db.open();
     m_sqlTable.setTable("ScheduleModel");
@@ -112,9 +116,7 @@ QVariant Schedule_Model::data(const QModelIndex &index, int role) const {
 
 void Schedule_Model::setFilter() {
     beginResetModel();
-    m_sqlTable.setFilter("weekday = strftime('%w','" +
-                         m_date.toString("yyyy-MM-dd") + "')" +
-                         " OR onceDate = " + m_date.toString("yyyy-MM-dd"));
+    m_sqlTable.setFilter(m_filter.arg(m_date.toString("yyyy-MM-dd")));
     m_sqlTable.select();
     endResetModel();
 }
