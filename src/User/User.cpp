@@ -1,22 +1,50 @@
 #include "User/User.h"
+#include "CacheManager/CacheManager.h"
+#include "Register/Register.h"
+#include <QDir>
 
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
-      m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db} {
+      m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
+      m_register(nullptr) {
+    QDir{}.mkpath("Register");
+
+    if (!prepareUserDB() || !registered()) {
+        connect(new CacheManager{"/Register/user", this}, &CacheManager::done,
+                [&](CacheManager *) { prepareUserDB(); });
+        connect(new CacheManager{"/Register/register", this},
+                &CacheManager::done,
+                [&](CacheManager *) { m_register = new Register{this}; });
+    } else if (registered()) {
+        QDir{}.mkpath(location());
+    }
+
+    connect(this, &User::registeredSuccessfully, [&] {
+        QDir{}.mkpath(location());
+        //
+    });
+}
+
+bool User::prepareUserDB() {
+    if (m_db.isOpen())
+        m_db.close();
     m_db.setDatabaseName("Register/user.db");
     m_db.open();
     m_sqlTableAccount.setTable("Account");
-    m_sqlTableAccount.select();
     m_sqlTableStudent.setTable("Student");
-    m_sqlTableStudent.select();
+    return m_sqlTableAccount.select() && m_sqlTableStudent.select();
 }
+
 bool User::registered() const { return m_sqlTableAccount.rowCount() > 0; }
+
 QString User::userName() const {
     return m_sqlTableAccount.record(0).value("user_name").toString();
 }
+
 QUrl User::pp_location() const {
     return m_sqlTableAccount.record(0).value("pp_location").toString();
 }
+
 QString User::bio() const {
     return m_sqlTableAccount.record(0).value("Bio").toString();
 }
@@ -31,23 +59,37 @@ qint32 User::studentID() const {
 QString User::program() const {
     return m_sqlTableStudent.record(0).value("Program").toString();
 }
+
 QString User::addmission() const {
     return m_sqlTableStudent.record(0).value("Addmission").toString();
 }
+
 int User::year() const {
     return m_sqlTableStudent.record(0).value("year").toInt();
 }
+
 int User::semester() const {
     return m_sqlTableStudent.record(0).value("semester").toInt();
 }
+
 int User::section() const {
     return m_sqlTableStudent.record(0).value("section").toInt();
 }
+
 QString User::department() const {
     return m_sqlTableStudent.record(0).value("Department").toString();
 }
+
+int User::departmentID() const {
+    return m_sqlTableStudent.record(0).value("pk_Department").toInt();
+}
+
 QString User::stream() const {
     return m_sqlTableStudent.record(0).value("Stream").toString();
+}
+
+int User::streamID() const {
+    return m_sqlTableStudent.record(0).value("pk_Stream").toInt();
 }
 
 void User::registerNew(QString userName, QString pp_location, QString Bio,
@@ -105,3 +147,12 @@ QStringList User::profileInfo() {
 
     return model;
 }
+
+QString User::location() const {
+    return program() + "/" + addmission() + "/" + "D" +
+           QString::number(departmentID()) + "S" + QString::number(streamID()) +
+           "Y" + QString::number(year()) + "S" + QString::number(semester()) +
+           "s" + QString::number(section());
+}
+
+Register *User::registerDB() { return m_register; }

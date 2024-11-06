@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import com.register.db
+import com.user.db
 
 Pane {
     id: root
@@ -61,14 +61,14 @@ Pane {
                 id: programCb
                 width: lv.width
                 displayText: currentText + " Program"
-                model: Register.program_type()
+                model: !!User.registerDB ? User.registerDB.program : ""
             }
             ComboBox {
                 id: addmissionCb
                 width: lv.width
                 displayText: currentText + " Admission"
                 // model: ['Regular', 'Extension', 'Summer', 'Remedial']
-                model: Register.addmission_type()
+                model: !!User.registerDB ? User.registerDB.addmission : ""
             }
             ComboBox {
                 id: yearCb
@@ -91,13 +91,13 @@ Pane {
             ComboBox {
                 id: departmentCb
                 width: lv.width
-                model: Register.department()
+                model: !!User.registerDB ? User.registerDB.department : ""
             }
             ComboBox {
                 id: streamCb
                 width: lv.width
                 displayText: currentText + " Stream"
-                model: Register.department_stream()
+                model: !!User.registerDB ? User.registerDB.department_stream : ""
             }
         }
     }

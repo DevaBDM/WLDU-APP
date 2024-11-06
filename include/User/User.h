@@ -1,6 +1,7 @@
 #ifndef INCLUDE_USER_USER_H_
 #define INCLUDE_USER_USER_H_
 
+#include "Register/Register.h"
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlRecord>
@@ -27,8 +28,14 @@ class User : public QObject {
 
     Q_PROPERTY(
         QStringList profileInfo READ profileInfo NOTIFY profileInfoChanged)
+
+    Q_PROPERTY(Register *registerDB READ registerDB NOTIFY registerDBChanged)
   public:
     explicit User(QObject *parent = nullptr);
+
+    QString location() const;
+    bool prepareUserDB();
+    Register *registerDB();
 
     void setProfileInfo();
 
@@ -49,7 +56,9 @@ class User : public QObject {
     int semester() const;
     int section() const;
     QString department() const;
+    int departmentID() const;
     QString stream() const;
+    int streamID() const;
 
     Q_INVOKABLE void registerNew(QString userName, QString pp_location,
                                  QString Bio, qint32 studentID, QString program,
@@ -60,6 +69,7 @@ class User : public QObject {
 
     QStringList profileInfo();
   signals:
+    void registerDBChanged();
     void registeredSuccessfully();
     void profileInfoChanged();
     void registeredChanged();
@@ -81,6 +91,7 @@ class User : public QObject {
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTableAccount;
     QSqlTableModel m_sqlTableStudent;
+    Register *m_register;
 };
 
 #endif // INCLUDE_USER_USER_H_

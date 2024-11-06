@@ -24,6 +24,8 @@ qt_add_executable(
   src/User/User.cpp
   include/Register/Register.h
   src/Register/Register.cpp
+  include/CacheManager/CacheManager.h
+  src/CacheManager/CacheManager.cpp
   #
 )
 
