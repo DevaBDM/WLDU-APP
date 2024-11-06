@@ -15,8 +15,17 @@ qt_policy(SET QTP0001 NEW)
 
 qt_standard_project_setup(REQUIRES 6.5)
 
-qt_add_executable(appWLDU src/main.cpp include/Schedule/ScheduleModel.h
-                  src/Schedule/ScheduleModel.cpp)
+qt_add_executable(
+  appWLDU
+  src/main.cpp
+  include/Schedule/ScheduleModel.h
+  src/Schedule/ScheduleModel.cpp
+  include/User/User.h
+  src/User/User.cpp
+  include/Register/Register.h
+  src/Register/Register.cpp
+  #
+)
 
 qt_add_qml_module(
   appWLDU
@@ -28,13 +37,14 @@ qt_add_qml_module(
   src/Main.qml
   src/Profile.qml
   src/EditProfile.qml
-  src/CutProfilePic.qml
   src/Welcome.qml
-  src/Register.qml
-  src/Account_SingUp.qml
-  src/Student_SignUp.qml
-  src/Personal_SignUp.qml
+  src/Home/Home.qml
   src/Schedule/Schedule.qml
+  src/Register/Register.qml
+  src/Register/AccountRegister.qml
+  src/Register/ProfilePictureRegister.qml
+  src/Register/StudentRegister.qml
+  src/Register/CutProfilePic.qml
   RESOURCES
   assets/icons/back.svg
   assets/icons/edit-profile.svg
