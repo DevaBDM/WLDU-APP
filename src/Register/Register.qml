@@ -80,7 +80,8 @@ Item {
                     text: !!User.UserCache ? User.UserCache.networkMessage(User.UserCache.networkStatus) : "Done"
                     enabled: !!User.UserCache ? !User.UserCache.progress : true
                     onClicked: {
-                        User.registerNew(settings.userName, settings.imageSource, settings.bio, settings.studentId, root.program, root.addmission, settings.yearIndex + 1, settings.semsterIndex + 1, settings.sectionIndex + 1, root.department, settings.departmentIndex + 1, root.stream, settings.streamIndex + 1);
+                        if (User.registerDB.isSupported(settings.programIndex + 1, settings.addmissionIndex + 1, settings.yearIndex + 1, settings.semsterIndex + 1, settings.sectionIndex + 1, settings.departmentIndex + 1, settings.streamIndex + 1))
+                            User.registerNew(settings.userName, settings.imageSource, settings.bio, settings.studentId, root.program, root.addmission, settings.yearIndex + 1, settings.semsterIndex + 1, settings.sectionIndex + 1, root.department, settings.departmentIndex + 1, root.stream, settings.streamIndex + 1);
                     }
                 }
             }

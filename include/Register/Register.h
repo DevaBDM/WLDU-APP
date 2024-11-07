@@ -19,6 +19,9 @@ class Register : public QObject {
     explicit Register(QObject *parent = nullptr);
 
     void fill(QString tableName, QStringList &member);
+    Q_INVOKABLE bool isSupported(int programIndex, int addmissionIndex,
+                                 int year, int semester, int section,
+                                 int departmentIndex, int streamIndex);
     QStringList program_type() const;
     QStringList addmission_type() const;
     QStringList department() const;
@@ -33,6 +36,7 @@ class Register : public QObject {
   private:
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTable;
+    QSqlTableModel m_sqlTableSupported;
     QStringList m_program_type;
     QStringList m_addmission_type;
     QStringList m_department;
