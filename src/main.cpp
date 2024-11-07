@@ -1,4 +1,3 @@
-#include "Schedule/ScheduleModel.h"
 #include "User/User.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -15,11 +14,7 @@ int main(int argc, char *argv[]) {
 
     User user;
 
-    Schedule_Model scheduleModel;
-
     qmlRegisterSingletonInstance("com.user.db", 1, 0, "User", &user);
-    qmlRegisterSingletonInstance("com.schedule.db", 1, 0, "ScheduleModel",
-                                 &scheduleModel);
 
     QQmlApplicationEngine engine;
     QObject::connect(

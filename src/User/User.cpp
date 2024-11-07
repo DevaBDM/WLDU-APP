@@ -1,28 +1,30 @@
 #include "User/User.h"
 #include "CacheManager/CacheManager.h"
 #include "Register/Register.h"
+#include "Schedule/ScheduleModel.h"
 #include <QDir>
 
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
       m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
-      m_register(nullptr) {
+      m_register(nullptr), m_schedule{this} {
     QDir{}.mkpath("Register");
 
     if (!prepareUserDB() || !registered()) {
         connect(new CacheManager{"/Register/user", this}, &CacheManager::done,
                 [&](CacheManager *) { prepareUserDB(); });
         connect(new CacheManager{"/Register/register", this},
-                &CacheManager::done,
-                [&](CacheManager *) { m_register = new Register{this}; });
+                &CacheManager::done, [&](CacheManager *) {
+                    m_register = new Register{this};
+                    connect(this, &User::registeredSuccessfully, m_register,
+                            &Register::deleteLater);
+                    emit registerDBChanged();
+                });
     } else if (registered()) {
-        QDir{}.mkpath(location());
+        prepareScheduleDB();
     }
 
-    connect(this, &User::registeredSuccessfully, [&] {
-        QDir{}.mkpath(location());
-        //
-    });
+    connect(this, &User::registeredSuccessfully, &User::prepareScheduleDB);
 }
 
 bool User::prepareUserDB() {
@@ -33,6 +35,12 @@ bool User::prepareUserDB() {
     m_sqlTableAccount.setTable("Account");
     m_sqlTableStudent.setTable("Student");
     return m_sqlTableAccount.select() && m_sqlTableStudent.select();
+}
+
+void User::prepareScheduleDB() {
+    QDir{}.mkpath(location());
+    m_schedule.setPath(location());
+    emit ScheduleChanged();
 }
 
 bool User::registered() const { return m_sqlTableAccount.rowCount() > 0; }
@@ -156,3 +164,4 @@ QString User::location() const {
 }
 
 Register *User::registerDB() { return m_register; }
+Schedule_Model *User::Schedule() { return &m_schedule; }

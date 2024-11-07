@@ -19,10 +19,10 @@ class Register : public QObject {
     explicit Register(QObject *parent = nullptr);
 
     void fill(QString tableName, QStringList &member);
-    Q_INVOKABLE QStringList program_type() const;
-    Q_INVOKABLE QStringList addmission_type() const;
-    Q_INVOKABLE QStringList department() const;
-    Q_INVOKABLE QStringList department_stream() const;
+    QStringList program_type() const;
+    QStringList addmission_type() const;
+    QStringList department() const;
+    QStringList department_stream() const;
 
   signals:
     void programChanged();

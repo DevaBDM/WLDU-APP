@@ -1,61 +1,23 @@
 #include "Schedule/ScheduleModel.h"
+#include "CacheManager/CacheManager.h"
 #include <QFile>
-#include <QNetworkRequest>
 
 Schedule_Model::Schedule_Model(QObject *parent)
-    : QAbstractListModel(parent),
+    : QAbstractListModel{parent},
       m_db{QSqlDatabase::addDatabase("QSQLITE", "Schedule")},
       m_sqlTable(parent, m_db), m_currentRow(0), m_date(QDate::currentDate()),
       m_filter{
           "(beginDate <= '%1' OR beginDate IS NULL) AND (expireDate > '%1' "
           "OR expireDate IS NULL) AND weekday = strftime('%w','%1') OR "
           "onceDate = '%1'"} {
-    m_db.setDatabaseName("schedule.db");
-    m_db.open();
-    m_sqlTable.setTable("ScheduleModel");
-    setFilter();
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::titleChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::startTimeChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::endTime);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::shortNoteChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::teacherNameChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::teacherPPChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::descriptionChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::typeChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::slipIDChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::scheduleIDChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::statusChanged);
-    connect(this, &Schedule_Model::currentRowChanged, this,
-            &Schedule_Model::seenChanged);
-
+    connectCurrentRow();
     connect(this, &Schedule_Model::dateChanged, this,
             &Schedule_Model::setFilter);
+}
 
-    connect(this, &Schedule_Model::epochChanged, this,
-            &Schedule_Model::downloadScheduleDB);
-
-    QFile file("schedule.dbEPOCH");
-    file.open(QFile::ReadOnly);
-    m_epoch = file.readAll().toInt();
-    file.close();
-
-    connect(&m_nm, &QNetworkAccessManager::finished, [](QNetworkReply *reply) {
-        reply->deleteLater(); //
-    });
-
-    setNetworkStatus(NetworkStatus::Waiting);
-    fetch();
+Schedule_Model::Schedule_Model(QString p, QObject *parent)
+    : Schedule_Model(parent) {
+    setPath(p);
 }
 
 int Schedule_Model::rowCount(const QModelIndex &parent) const {
@@ -63,7 +25,6 @@ int Schedule_Model::rowCount(const QModelIndex &parent) const {
 }
 
 QHash<int, QByteArray> Schedule_Model::roleNames() const {
-
     static QHash<int, QByteArray> roleNames;
 
     roleNames[startTimeRole] = "startTime";
@@ -114,11 +75,12 @@ QVariant Schedule_Model::data(const QModelIndex &index, int role) const {
     return {};
 }
 
-void Schedule_Model::setFilter() {
+bool Schedule_Model::setFilter() {
     beginResetModel();
     m_sqlTable.setFilter(m_filter.arg(m_date.toString("yyyy-MM-dd")));
-    m_sqlTable.select();
+    bool select = m_sqlTable.select();
     endResetModel();
+    return select;
 }
 
 void Schedule_Model::nextDay() {
@@ -135,41 +97,6 @@ int Schedule_Model::currentRow() const { return m_currentRow; }
 void Schedule_Model::setCurrentRow(int row) {
     m_currentRow = row;
     emit currentRowChanged(row);
-}
-
-void Schedule_Model::downloadScheduleDB() {
-
-    QNetworkRequest nq{QUrl{"http://localhost/http/schedule.db"}};
-    QNetworkReply *reply = m_nm.get(nq);
-
-    connect(reply, &QNetworkReply::errorOccurred,
-            [=](QNetworkReply::NetworkError error) {
-                switch (error) {
-                case QNetworkReply::HostNotFoundError:
-                    setNetworkStatus(NetworkStatus::Waiting);
-                    break;
-                default:
-                    setNetworkStatus(NetworkStatus::Error);
-                }
-            });
-
-    setNetworkStatus(NetworkStatus::Downloading);
-    connect(reply, &QNetworkReply::finished, this, [&, reply]() {
-        if (reply->error() != QNetworkReply::NoError)
-            return;
-
-        m_db.close();
-
-        QFile file("schedule.db");
-        file.open(QFile::WriteOnly);
-        file.write(reply->readAll());
-        file.close();
-
-        m_db.open();
-
-        setFilter();
-        setNetworkStatus(NetworkStatus::Connected);
-    });
 }
 
 QVariant Schedule_Model::startTime() const {
@@ -250,36 +177,7 @@ void Schedule_Model::setNetworkStatus(NetworkStatus message) {
     emit networkStatusChanged();
 }
 
-void Schedule_Model::fetch() {
-    QNetworkReply *reply = m_nm.get(
-        QNetworkRequest{QUrl{"http://localhost/http/schedule.dbEPOCH"}});
-
-    connect(reply, &QNetworkReply::finished, [&, reply]() {
-        if (reply->error() == QNetworkReply::NoError) {
-            int epoch{reply->readAll().toInt()};
-            setEpoch(epoch);
-            setNetworkStatus(NetworkStatus::Connected);
-        }
-    });
-    connect(reply, &QNetworkReply::socketStartedConnecting,
-            [&]() { setNetworkStatus(NetworkStatus::Connecting); });
-    connect(reply, &QNetworkReply::requestSent,
-            [&]() { setNetworkStatus(NetworkStatus::Requesting); });
-    connect(reply, &QNetworkReply::redirected,
-            [&]() { setNetworkStatus(NetworkStatus::Redirected); });
-    connect(reply, &QNetworkReply::metaDataChanged,
-            [&]() { setNetworkStatus(NetworkStatus::Receiving); });
-    connect(reply, &QNetworkReply::errorOccurred,
-            [=](QNetworkReply::NetworkError error) {
-                switch (error) {
-                case QNetworkReply::HostNotFoundError:
-                    setNetworkStatus(NetworkStatus::Waiting);
-                    break;
-                default:
-                    setNetworkStatus(NetworkStatus::Error);
-                }
-            });
-}
+void Schedule_Model::fetch() {}
 
 QString Schedule_Model::networkMessage(NetworkStatus id) const {
     static QHash<NetworkStatus, QString> message{
@@ -297,14 +195,45 @@ QString Schedule_Model::networkMessage(NetworkStatus id) const {
 
 int Schedule_Model::epoch() const { return m_epoch; }
 
-void Schedule_Model::setEpoch(int epoch) {
-    if (epoch == m_epoch)
-        return;
-    m_epoch = epoch;
-    emit epochChanged();
+bool Schedule_Model::prepareModelDB() {
+    if (m_db.isOpen())
+        m_db.close();
+    m_db.setDatabaseName(m_path + ".db");
+    m_db.open();
+    m_sqlTable.setTable("ScheduleModel");
+    return setFilter();
+}
 
-    QFile file("schedule.dbEPOCH");
-    file.open(QFile::WriteOnly);
-    file.write(QByteArray::number(m_epoch));
-    file.close();
+void Schedule_Model::connectCurrentRow() {
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::titleChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::startTimeChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::endTime);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::shortNoteChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::teacherNameChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::teacherPPChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::descriptionChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::typeChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::slipIDChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::scheduleIDChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::statusChanged);
+    connect(this, &Schedule_Model::currentRowChanged, this,
+            &Schedule_Model::seenChanged);
+}
+
+void Schedule_Model::setPath(QString p) {
+    m_path = p + "/schedule";
+    if (!prepareModelDB())
+        connect(new CacheManager{"/" + m_path, this}, &CacheManager::done,
+                [&](CacheManager *) { prepareModelDB(); });
 }

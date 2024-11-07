@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import com.schedule.db
+import com.user.db
 
 ListView {
     id: root
@@ -9,11 +9,11 @@ ListView {
     header: lvHeader
     Timer {
         id: timer
-        interval: (ScheduleModel.networkStatus == ScheduleModel.Waiting || ScheduleModel.networkStatus == ScheduleModel.Error ? 4 : 30 * 60) * 1000
+        interval: (User.Schedule.networkStatus === User.Schedule.Connected ? 30 * 60 : 4) * 1000
         repeat: true
         running: true
         triggeredOnStart: true
-        onTriggered: ScheduleModel.fetch()
+        onTriggered: User.Schedule.fetch()
     }
 
     populate: Transition {
@@ -42,7 +42,7 @@ ListView {
                 property var currentSchedule: 0
                 Label {
                     Layout.fillWidth: true
-                    text: !!ScheduleModel.title ? ScheduleModel.title : ""
+                    text: !!User.Schedule.title ? User.Schedule.title : ""
                     fontSizeMode: Label.VerticalFit
                     elide: Label.ElideRight
                     font {
@@ -53,16 +53,16 @@ ListView {
                 Label {
                     Layout.fillWidth: true
                     elide: Label.ElideRight
-                    text: ScheduleModel.startTime + " am - " + ScheduleModel.endTime + " pm"
+                    text: User.Schedule.startTime + " am - " + User.Schedule.endTime + " pm"
                 }
                 ToolButton {
                     Layout.fillWidth: true
-                    icon.source: ScheduleModel.teacherPP
-                    text: !!ScheduleModel.teacherName ? ScheduleModel.teacherName : ""
+                    icon.source: User.Schedule.teacherPP
+                    text: !!User.Schedule.teacherName ? User.Schedule.teacherName : ""
                 }
                 Label {
                     Layout.fillWidth: true
-                    text: !!ScheduleModel.shortNote ? "Description" : "No description !!"
+                    text: !!User.Schedule.shortNote ? "Description" : "No description !!"
                     elide: Label.ElideRight
                     font {
                         pixelSize: 30
@@ -72,18 +72,18 @@ ListView {
                 Label {
                     Layout.fillWidth: true
                     elide: Label.ElideRight
-                    text: !!ScheduleModel.shortNote ? ScheduleModel.shortNote : ""
+                    text: !!User.Schedule.shortNote ? User.Schedule.shortNote : ""
                 }
                 Label {
                     Layout.fillWidth: true
-                    text: !!ScheduleModel.description ? ScheduleModel.description : ""
+                    text: !!User.Schedule.description ? User.Schedule.description : ""
                     wrapMode: Label.Wrap
                 }
             }
         }
     }
 
-    model: ScheduleModel
+    model: User.Schedule
     delegate: lvDelegate
 
     Component {
@@ -107,7 +107,7 @@ ListView {
                     ToolButton {
                         id: todayTB
                         text: "Today"
-                        onClicked: ScheduleModel.currentDate()
+                        onClicked: User.Schedule.currentDate()
                         font {
                             bold: true
                         }
@@ -121,29 +121,29 @@ ListView {
 
                 ToolButton {
                     enabled: {
-                        switch (ScheduleModel.networkStatus) {
-                        case ScheduleModel.Connected:
-                        case ScheduleModel.Error:
-                        case ScheduleModel.Waiting:
+                        switch (User.Schedule.networkStatus) {
+                        case User.Schedule.Connected:
+                        case User.Schedule.Error:
+                        case User.Schedule.Waiting:
                             return true;
                         default:
                             return false;
                         }
                     }
                     icon.source: {
-                        switch (ScheduleModel.networkStatus) {
-                        case ScheduleModel.Connected:
+                        switch (User.Schedule.networkStatus) {
+                        case User.Schedule.Connected:
                             "/qt/qml/WLDU/assets/icons/circle-check.svg";
                             break;
-                        case ScheduleModel.Error:
+                        case User.Schedule.Error:
                             "/qt/qml/WLDU/assets/icons/circle-exclamation.svg";
                             break;
                         default:
                             "/qt/qml/WLDU/assets/icons/arrow-rotate.svg";
                         }
                     }
-                    text: ScheduleModel.networkMessage(ScheduleModel.networkStatus)
-                    onClicked: ScheduleModel.fetch()
+                    text: User.Schedule.networkMessage(User.Schedule.networkStatus)
+                    onClicked: User.Schedule.fetch()
                 }
 
                 ToolButton {
@@ -157,19 +157,19 @@ ListView {
                     id: privouseTB
                     icon.source: "/qt/qml/WLDU/assets/icons/angle-left.svg"
                     onClicked: {
-                        ScheduleModel.previousDay();
+                        User.Schedule.previousDay();
                     }
                 }
                 Label {
                     Layout.fillWidth: true
                     horizontalAlignment: Label.AlignHCenter
-                    text: ScheduleModel.date
+                    text: User.Schedule.date
                 }
                 ToolButton {
                     id: nextTB
                     icon.source: "/qt/qml/WLDU/assets/icons/angle-right.svg"
                     onClicked: {
-                        ScheduleModel.nextDay();
+                        User.Schedule.nextDay();
                     }
                 }
             }
@@ -183,13 +183,13 @@ ListView {
                         ToolButton {
                             text: modelData // + "\n" + index
                             anchors.horizontalCenter: parent.horizontalCenter
-                            onClicked: ScheduleModel.setWeekDay(index)
-                            opacity: index == ScheduleModel.weekDay ? 1 : 0.7
+                            onClicked: User.Schedule.setWeekDay(index)
+                            opacity: index == User.Schedule.weekDay ? 1 : 0.7
                         }
                         Rectangle {
                             implicitWidth: parent.width / 2
                             anchors.horizontalCenter: parent.horizontalCenter
-                            visible: index == ScheduleModel.weekDay
+                            visible: index == User.Schedule.weekDay
                             implicitHeight: 4
                             color: "blue"
                         }
@@ -261,7 +261,7 @@ ListView {
                 Layout.fillHeight: true
                 clip: true
                 onClicked: {
-                    ScheduleModel.currentRow = index;
+                    User.Schedule.currentRow = index;
                     drawerInfo.open();
                 }
                 contentItem: GridLayout {

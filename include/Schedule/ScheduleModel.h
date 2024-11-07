@@ -3,8 +3,6 @@
 
 #include <QAbstractListModel>
 #include <QDate>
-#include <QNetworkAccessManager>
-#include <QNetworkReply>
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlRecord>
@@ -33,6 +31,7 @@ class Schedule_Model : public QAbstractListModel {
                    networkStatusChanged)
   public:
     explicit Schedule_Model(QObject *parent = nullptr);
+    explicit Schedule_Model(QString p, QObject *parent = nullptr);
     enum Role {
         startTimeRole = Qt::UserRole + 1,
         endTimeRole,
@@ -70,6 +69,7 @@ class Schedule_Model : public QAbstractListModel {
     void setCurrentRow(int row);
     void setNetworkStatus(NetworkStatus);
     void setEpoch(int);
+    void setPath(QString p);
 
     QVariant startTime() const;
     QVariant endTime() const;
@@ -87,10 +87,12 @@ class Schedule_Model : public QAbstractListModel {
     QVariant weekDay() const;
     NetworkStatus networkStatus() const;
 
-    void downloadScheduleDB();
+  private:
+    bool prepareModelDB();
+    void connectCurrentRow();
 
   public slots:
-    void setFilter();
+    bool setFilter();
     void nextDay();
     void previousDay();
     void currentDate();
@@ -124,9 +126,9 @@ class Schedule_Model : public QAbstractListModel {
     int m_currentRow;
     QDate m_date;
     NetworkStatus m_networkStatus;
-    QNetworkAccessManager m_nm;
     int m_epoch;
     QString m_filter;
+    QString m_path;
 };
 
 #endif // INCLUDE_SRC_SCHEDULEMODEL_H_

@@ -2,6 +2,7 @@
 #define INCLUDE_USER_USER_H_
 
 #include "Register/Register.h"
+#include "Schedule/ScheduleModel.h"
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlRecord>
@@ -30,12 +31,15 @@ class User : public QObject {
         QStringList profileInfo READ profileInfo NOTIFY profileInfoChanged)
 
     Q_PROPERTY(Register *registerDB READ registerDB NOTIFY registerDBChanged)
+    Q_PROPERTY(Schedule_Model *Schedule READ Schedule NOTIFY ScheduleChanged)
   public:
     explicit User(QObject *parent = nullptr);
 
     QString location() const;
     bool prepareUserDB();
+    void prepareScheduleDB();
     Register *registerDB();
+    Schedule_Model *Schedule();
 
     void setProfileInfo();
 
@@ -70,6 +74,7 @@ class User : public QObject {
     QStringList profileInfo();
   signals:
     void registerDBChanged();
+    void ScheduleChanged();
     void registeredSuccessfully();
     void profileInfoChanged();
     void registeredChanged();
@@ -92,6 +97,7 @@ class User : public QObject {
     QSqlTableModel m_sqlTableAccount;
     QSqlTableModel m_sqlTableStudent;
     Register *m_register;
+    Schedule_Model m_schedule;
 };
 
 #endif // INCLUDE_USER_USER_H_
