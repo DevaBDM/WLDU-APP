@@ -7,19 +7,26 @@
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
       m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
-      m_register(nullptr), m_schedule{this} {
+      m_register(nullptr), m_schedule{this}, m_mainCache{nullptr},
+      m_registerCache(nullptr), m_userCache{nullptr} {
     QDir{}.mkpath("Register");
 
     if (!prepareUserDB() || !registered()) {
-        connect(new CacheManager{"/Register/user", this}, &CacheManager::done,
-                [&](CacheManager *) { prepareUserDB(); });
-        connect(new CacheManager{"/Register/register", this},
-                &CacheManager::done, [&](CacheManager *) {
-                    m_register = new Register{this};
-                    connect(this, &User::registeredSuccessfully, m_register,
-                            &Register::deleteLater);
-                    emit registerDBChanged();
-                });
+        setUserCache(new CacheManager{"/Register/user", this});
+        setRegisterCache(new CacheManager{"/Register/register", this});
+
+        connect(userCache(), &CacheManager::done, [&](CacheManager *cache) {
+            prepareUserDB();
+            setUserCache(nullptr);
+        });
+
+        connect(registerCache(), &CacheManager::done, [&](CacheManager *) {
+            m_register = new Register{this};
+            connect(this, &User::registeredSuccessfully, m_register,
+                    &Register::deleteLater);
+            setRegisterCache(nullptr);
+            emit registerDBChanged();
+        });
     } else if (registered()) {
         prepareScheduleDB();
     }
@@ -34,7 +41,8 @@ bool User::prepareUserDB() {
     m_db.open();
     m_sqlTableAccount.setTable("Account");
     m_sqlTableStudent.setTable("Student");
-    return m_sqlTableAccount.select() && m_sqlTableStudent.select();
+    m_UserDBPrepared = m_sqlTableAccount.select() && m_sqlTableStudent.select();
+    return m_UserDBPrepared;
 }
 
 void User::prepareScheduleDB() {
@@ -104,43 +112,47 @@ void User::registerNew(QString userName, QString pp_location, QString Bio,
                        qint32 studentID, QString program, QString addmission,
                        int year, int semester, int section, QString department,
                        int departmentIndex, QString stream, int streamIndex) {
-    QSqlRecord r{m_sqlTableAccount.record()};
-    r.setValue("user_name", userName);
-    r.setValue("pp_location", pp_location);
-    r.setValue("Bio", Bio);
-    m_sqlTableAccount.insertRecord(-1, r);
-    m_sqlTableAccount.select();
+    if (m_UserDBPrepared) {
+        QSqlRecord r{m_sqlTableAccount.record()};
+        r.setValue("user_name", userName);
+        r.setValue("pp_location", pp_location);
+        r.setValue("Bio", Bio);
+        m_sqlTableAccount.insertRecord(-1, r);
+        m_sqlTableAccount.select();
 
-    QSqlRecord rr{m_sqlTableStudent.record()};
-    rr.setValue("studentID", studentID);
-    rr.setValue("pk_Account", m_sqlTableAccount.rowCount());
-    rr.setValue("Program", program);
-    rr.setValue("addmission", addmission);
-    rr.setValue("year", year);
-    rr.setValue("semester", semester);
-    rr.setValue("section", section);
-    rr.setValue("pk_Department", departmentIndex);
-    rr.setValue("Department", department);
-    rr.setValue("pk_Stream", streamIndex);
-    rr.setValue("Stream", stream);
-    m_sqlTableStudent.insertRecord(-1, rr);
-    m_sqlTableStudent.select();
+        QSqlRecord rr{m_sqlTableStudent.record()};
+        rr.setValue("studentID", studentID);
+        rr.setValue("pk_Account", m_sqlTableAccount.rowCount());
+        rr.setValue("Program", program);
+        rr.setValue("addmission", addmission);
+        rr.setValue("year", year);
+        rr.setValue("semester", semester);
+        rr.setValue("section", section);
+        rr.setValue("pk_Department", departmentIndex);
+        rr.setValue("Department", department);
+        rr.setValue("pk_Stream", streamIndex);
+        rr.setValue("Stream", stream);
+        m_sqlTableStudent.insertRecord(-1, rr);
+        m_sqlTableStudent.select();
 
-    emit userNameChanged();
-    emit pp_locationChanged();
-    emit bioChanged();
-    emit studentIDChanged();
-    emit programChanged();
-    emit addmissionChanged();
-    emit yearChanged();
-    emit semesterChanged();
-    emit sectionChanged();
-    emit departmentChanged();
-    emit streamChanged();
+        emit userNameChanged();
+        emit pp_locationChanged();
+        emit bioChanged();
+        emit studentIDChanged();
+        emit programChanged();
+        emit addmissionChanged();
+        emit yearChanged();
+        emit semesterChanged();
+        emit sectionChanged();
+        emit departmentChanged();
+        emit streamChanged();
 
-    emit registeredChanged();
-    emit registeredSuccessfully();
-    emit profileInfoChanged();
+        emit registeredChanged();
+        emit registeredSuccessfully();
+        emit profileInfoChanged();
+    } else if (userCache()) {
+        userCache()->reFetch();
+    }
 }
 
 QStringList User::profileInfo() {
@@ -165,3 +177,40 @@ QString User::location() const {
 
 Register *User::registerDB() { return m_register; }
 Schedule_Model *User::Schedule() { return &m_schedule; }
+
+CacheManager *User::Cache() const { return m_mainCache; }
+CacheManager *User::registerCache() const { return m_registerCache; }
+CacheManager *User::userCache() const { return m_userCache; }
+
+void User::setCache(CacheManager *cache) {
+    if (!cache && !m_mainCache || cache == m_mainCache)
+        return;
+
+    if (m_mainCache)
+        m_mainCache->deleteLater();
+
+    m_mainCache = cache;
+    emit CacheChanged();
+}
+
+void User::setRegisterCache(CacheManager *cache) {
+    if (!cache && !m_registerCache || cache == m_registerCache)
+        return;
+
+    if (m_registerCache)
+        m_registerCache->deleteLater();
+
+    m_registerCache = cache;
+    emit registerCacheChanged();
+}
+
+void User::setUserCache(CacheManager *cache) {
+    if (!cache && !m_userCache || cache == m_userCache)
+        return;
+
+    if (m_userCache)
+        m_userCache->deleteLater();
+
+    m_userCache = cache;
+    emit userCacheChanged();
+}

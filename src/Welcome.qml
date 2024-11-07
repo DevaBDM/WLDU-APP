@@ -4,6 +4,9 @@ import QtQuick.Controls
 
 Item {
     signal registerClicked
+    property alias notice: info.text
+    property alias enabled: regButton.enabled
+    property alias info: regButton.text
     ColumnLayout {
         anchors.fill: parent
         Label {
@@ -23,7 +26,16 @@ Item {
             source: '../assets/images/wldu_logo.png'
             fillMode: Image.PreserveAspectFit
         }
+        Label {
+            id: info
+            Layout.fillWidth: true
+            horizontalAlignment: Label.AlignHCenter
+            font {
+                bold: true
+            }
+        }
         Button {
+            id: regButton
             text: "Register"
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             onClicked: registerClicked()

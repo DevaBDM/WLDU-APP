@@ -84,7 +84,14 @@ ApplicationWindow {
         id: welcome
         Welcome {
             property bool full: true
-            onRegisterClicked: stackViewHome.push(register)
+            info: !!User.RegisterCache ? User.RegisterCache.networkMessage(User.RegisterCache.networkStatus) : "Register"
+            enabled: !!User.RegisterCache ? !User.RegisterCache.progress : true
+            onRegisterClicked: {
+                if (!!User.registerDB) {
+                    stackViewHome.push(register);
+                } else if (!!User.RegisterCache)
+                    User.RegisterCache.reFetch();
+            }
         }
     }
 
@@ -95,16 +102,8 @@ ApplicationWindow {
             property bool full: true
             onDone: {
                 stackViewHome.clear();
-                stackViewHome.push(busyIndicator);
+                stackViewHome.push(swipeViewHome);
             }
-        }
-    }
-
-    Connections {
-        target: User
-        function onRegisteredSuccessfully() {
-            stackViewHome.clear();
-            stackViewHome.push(swipeViewHome);
         }
     }
 
@@ -113,10 +112,4 @@ ApplicationWindow {
         Home {}
     }
 
-    Component {
-        id: busyIndicator
-        BusyIndicator {
-            property bool full: true
-        }
-    }
 }

@@ -1,6 +1,7 @@
 #ifndef INCLUDE_SRC_SCHEDULEMODEL_H_
 #define INCLUDE_SRC_SCHEDULEMODEL_H_
 
+#include "CacheManager/CacheManager.h"
 #include <QAbstractListModel>
 #include <QDate>
 #include <QObject>
@@ -27,8 +28,7 @@ class Schedule_Model : public QAbstractListModel {
 
     Q_PROPERTY(QVariant date READ date NOTIFY dateChanged)
     Q_PROPERTY(QVariant weekDay READ weekDay NOTIFY dateChanged)
-    Q_PROPERTY(NetworkStatus networkStatus READ networkStatus NOTIFY
-                   networkStatusChanged)
+    Q_PROPERTY(CacheManager *Cache READ Cache NOTIFY CacheChanged)
   public:
     explicit Schedule_Model(QObject *parent = nullptr);
     explicit Schedule_Model(QString p, QObject *parent = nullptr);
@@ -46,17 +46,6 @@ class Schedule_Model : public QAbstractListModel {
         statusRole,
         seenRole
     };
-    enum class NetworkStatus {
-        Connecting,
-        Requesting,
-        Redirected,
-        Receiving,
-        Connected,
-        Downloading,
-        Waiting,
-        Error
-    };
-    Q_ENUM(NetworkStatus)
 
     int rowCount(const QModelIndex &parent = QModelIndex{}) const override;
 
@@ -67,9 +56,9 @@ class Schedule_Model : public QAbstractListModel {
     // properties
     int currentRow() const;
     void setCurrentRow(int row);
-    void setNetworkStatus(NetworkStatus);
     void setEpoch(int);
     void setPath(QString p);
+    void setCache(CacheManager *);
 
     QVariant startTime() const;
     QVariant endTime() const;
@@ -85,7 +74,7 @@ class Schedule_Model : public QAbstractListModel {
     QVariant seen() const;
     QVariant date() const;
     QVariant weekDay() const;
-    NetworkStatus networkStatus() const;
+    CacheManager *Cache() const;
 
   private:
     bool prepareModelDB();
@@ -98,10 +87,10 @@ class Schedule_Model : public QAbstractListModel {
     void currentDate();
     void setWeekDay(int week);
     void fetch();
-    QString networkMessage(NetworkStatus) const;
     int epoch() const;
 
   signals:
+    void CacheChanged();
     void currentRowChanged(int);
 
     void startTimeChanged();
@@ -117,7 +106,6 @@ class Schedule_Model : public QAbstractListModel {
     void statusChanged();
     void seenChanged();
     void dateChanged();
-    void networkStatusChanged();
     void epochChanged();
 
   private:
@@ -125,10 +113,10 @@ class Schedule_Model : public QAbstractListModel {
     QSqlTableModel m_sqlTable;
     int m_currentRow;
     QDate m_date;
-    NetworkStatus m_networkStatus;
     int m_epoch;
     QString m_filter;
     QString m_path;
+    CacheManager *m_mainCache;
 };
 
 #endif // INCLUDE_SRC_SCHEDULEMODEL_H_

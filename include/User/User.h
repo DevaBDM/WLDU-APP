@@ -1,6 +1,7 @@
 #ifndef INCLUDE_USER_USER_H_
 #define INCLUDE_USER_USER_H_
 
+#include "CacheManager/CacheManager.h"
 #include "Register/Register.h"
 #include "Schedule/ScheduleModel.h"
 #include <QObject>
@@ -32,6 +33,10 @@ class User : public QObject {
 
     Q_PROPERTY(Register *registerDB READ registerDB NOTIFY registerDBChanged)
     Q_PROPERTY(Schedule_Model *Schedule READ Schedule NOTIFY ScheduleChanged)
+    Q_PROPERTY(CacheManager *Cache READ Cache NOTIFY CacheChanged)
+    Q_PROPERTY(CacheManager *RegisterCache READ registerCache NOTIFY
+                   registerCacheChanged)
+    Q_PROPERTY(CacheManager *UserCache READ userCache NOTIFY userCacheChanged)
   public:
     explicit User(QObject *parent = nullptr);
 
@@ -42,6 +47,9 @@ class User : public QObject {
     Schedule_Model *Schedule();
 
     void setProfileInfo();
+    void setCache(CacheManager *);
+    void setRegisterCache(CacheManager *);
+    void setUserCache(CacheManager *);
 
     bool registered() const;
     QString userName() const;
@@ -63,6 +71,9 @@ class User : public QObject {
     int departmentID() const;
     QString stream() const;
     int streamID() const;
+    CacheManager *Cache() const;
+    CacheManager *registerCache() const;
+    CacheManager *userCache() const;
 
     Q_INVOKABLE void registerNew(QString userName, QString pp_location,
                                  QString Bio, qint32 studentID, QString program,
@@ -73,6 +84,9 @@ class User : public QObject {
 
     QStringList profileInfo();
   signals:
+    void CacheChanged();
+    void registerCacheChanged();
+    void userCacheChanged();
     void registerDBChanged();
     void ScheduleChanged();
     void registeredSuccessfully();
@@ -98,6 +112,10 @@ class User : public QObject {
     QSqlTableModel m_sqlTableStudent;
     Register *m_register;
     Schedule_Model m_schedule;
+    CacheManager *m_mainCache;
+    CacheManager *m_registerCache;
+    CacheManager *m_userCache;
+    bool m_UserDBPrepared;
 };
 
 #endif // INCLUDE_USER_USER_H_

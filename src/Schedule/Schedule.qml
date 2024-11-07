@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import WLDU
 import com.user.db
 
 ListView {
@@ -9,11 +10,11 @@ ListView {
     header: lvHeader
     Timer {
         id: timer
-        interval: (User.Schedule.networkStatus === User.Schedule.Connected ? 30 * 60 : 4) * 1000
+        interval: (!!User.Schedule.Cache && User.Schedule.Cache.networkStatus === CacheManager.Connected ? 30 * 60 : 4) * 1000
         repeat: true
-        running: true
+        running: !!User.Schedule.Cache
         triggeredOnStart: true
-        onTriggered: User.Schedule.fetch()
+        onTriggered: User.Schedule.Cache.reFetch()
     }
 
     populate: Transition {
@@ -121,29 +122,39 @@ ListView {
 
                 ToolButton {
                     enabled: {
-                        switch (User.Schedule.networkStatus) {
-                        case User.Schedule.Connected:
-                        case User.Schedule.Error:
-                        case User.Schedule.Waiting:
+                        if (!!User.Schedule.Cache) {
+                            switch (User.Schedule.Cache.networkStatus) {
+                            case CacheManager.Connected:
+                            case CacheManager.Error:
+                            case CacheManager.Waiting:
+                                return true;
+                            default:
+                                return false;
+                            }
+                        } else
                             return true;
-                        default:
-                            return false;
-                        }
                     }
+
                     icon.source: {
-                        switch (User.Schedule.networkStatus) {
-                        case User.Schedule.Connected:
-                            "/qt/qml/WLDU/assets/icons/circle-check.svg";
-                            break;
-                        case User.Schedule.Error:
-                            "/qt/qml/WLDU/assets/icons/circle-exclamation.svg";
-                            break;
-                        default:
+                        if (!!User.Schedule.Cache) {
+                            switch (User.Schedule.Cache.networkStatus) {
+                            case CacheManager.Connected:
+                                "/qt/qml/WLDU/assets/icons/circle-check.svg";
+                                break;
+                            case CacheManager.Error:
+                                "/qt/qml/WLDU/assets/icons/circle-exclamation.svg";
+                                break;
+                            default:
+                                "/qt/qml/WLDU/assets/icons/arrow-rotate.svg";
+                            }
+                        } else
                             "/qt/qml/WLDU/assets/icons/arrow-rotate.svg";
-                        }
                     }
-                    text: User.Schedule.networkMessage(User.Schedule.networkStatus)
-                    onClicked: User.Schedule.fetch()
+                    text: !!User.Schedule.Cache ? User.Schedule.Cache.networkMessage(User.Schedule.Cache.networkStatus) : ""
+                    onClicked: {
+                        if (!!User.Schedule.Cache)
+                            User.Schedule.Cache.reFetch();
+                    }
                 }
 
                 ToolButton {

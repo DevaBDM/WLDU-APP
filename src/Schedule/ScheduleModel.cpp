@@ -1,5 +1,4 @@
 #include "Schedule/ScheduleModel.h"
-#include "CacheManager/CacheManager.h"
 #include <QFile>
 
 Schedule_Model::Schedule_Model(QObject *parent)
@@ -9,7 +8,8 @@ Schedule_Model::Schedule_Model(QObject *parent)
       m_filter{
           "(beginDate <= '%1' OR beginDate IS NULL) AND (expireDate > '%1' "
           "OR expireDate IS NULL) AND weekday = strftime('%w','%1') OR "
-          "onceDate = '%1'"} {
+          "onceDate = '%1'"},
+      m_mainCache(nullptr) {
     connectCurrentRow();
     connect(this, &Schedule_Model::dateChanged, this,
             &Schedule_Model::setFilter);
@@ -166,32 +166,7 @@ void Schedule_Model::currentDate() {
     emit dateChanged();
 }
 
-Schedule_Model::NetworkStatus Schedule_Model::networkStatus() const {
-    return m_networkStatus;
-}
-
-void Schedule_Model::setNetworkStatus(NetworkStatus message) {
-    if (message == m_networkStatus)
-        return;
-    m_networkStatus = message;
-    emit networkStatusChanged();
-}
-
 void Schedule_Model::fetch() {}
-
-QString Schedule_Model::networkMessage(NetworkStatus id) const {
-    static QHash<NetworkStatus, QString> message{
-        {NetworkStatus::Connecting, "Connecting..."},
-        {NetworkStatus::Requesting, "Requesting..."},
-        {NetworkStatus::Redirected, "Redirected"},
-        {NetworkStatus::Receiving, "Receiving..."},
-        {NetworkStatus::Connected, "Connected"},
-        {NetworkStatus::Downloading, "Downloading..."},
-        {NetworkStatus::Waiting, "Waitting for network..."},
-        {NetworkStatus::Error, "Network error"}};
-
-    return message[id];
-}
 
 int Schedule_Model::epoch() const { return m_epoch; }
 
@@ -233,7 +208,21 @@ void Schedule_Model::connectCurrentRow() {
 
 void Schedule_Model::setPath(QString p) {
     m_path = p + "/schedule";
-    if (!prepareModelDB())
-        connect(new CacheManager{"/" + m_path, this}, &CacheManager::done,
-                [&](CacheManager *) { prepareModelDB(); });
+    prepareModelDB();
+    setCache(new CacheManager{"/" + m_path, this});
+    connect(Cache(), &CacheManager::upgraded,
+            [&](CacheManager *) { prepareModelDB(); });
+}
+
+CacheManager *Schedule_Model::Cache() const { return m_mainCache; }
+
+void Schedule_Model::setCache(CacheManager *cache) {
+    if (!cache && !m_mainCache || cache == m_mainCache)
+        return;
+
+    if (m_mainCache)
+        m_mainCache->deleteLater();
+
+    m_mainCache = cache;
+    emit CacheChanged();
 }
