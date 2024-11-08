@@ -169,7 +169,7 @@ QStringList User::profileInfo() {
 }
 
 QString User::location() const {
-    return program() + "/" + addmission() + "/" + "D" +
+    return "Material/" + program() + "/" + addmission() + "/" + "D" +
            QString::number(departmentID()) + "S" + QString::number(streamID()) +
            "Y" + QString::number(year()) + "S" + QString::number(semester()) +
            "s" + QString::number(section());

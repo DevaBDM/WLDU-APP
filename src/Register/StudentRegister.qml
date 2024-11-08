@@ -18,6 +18,12 @@ Pane {
     property alias streamIndex: streamCb.currentIndex
     property alias stream: streamCb.currentText
 
+    readonly property alias acceptableInput: studentIdTf.acceptableInput
+    function animate() {
+        invalidInputAnime.start();
+        studentIdTf.forceActiveFocus();
+    }
+
     ListView {
         id: lv
         anchors.fill: parent

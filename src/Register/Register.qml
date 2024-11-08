@@ -15,6 +15,17 @@ Item {
             done();
         }
     }
+    Dialog {
+        id: messageDialog
+        title: "Cannot Register!!"
+        anchors.centerIn: parent
+        Label {
+            anchors.fill: parent
+            text: "Selected Program, Addmission, Department, stream, year, semester or section is not currently supported!!\n\ntip: Choose \"Core\" Stream if you didn't have stream or not yet selected
+            \n\nPlease Select again"
+            wrapMode: Label.Wrap
+        }
+    }
 
     property alias program: student.program
     property alias addmission: student.addmission
@@ -80,8 +91,21 @@ Item {
                     text: !!User.UserCache ? User.UserCache.networkMessage(User.UserCache.networkStatus) : "Done"
                     enabled: !!User.UserCache ? !User.UserCache.progress : true
                     onClicked: {
-                        if (User.registerDB.isSupported(settings.programIndex + 1, settings.addmissionIndex + 1, settings.yearIndex + 1, settings.semsterIndex + 1, settings.sectionIndex + 1, settings.departmentIndex + 1, settings.streamIndex + 1))
-                            User.registerNew(settings.userName, settings.imageSource, settings.bio, settings.studentId, root.program, root.addmission, settings.yearIndex + 1, settings.semsterIndex + 1, settings.sectionIndex + 1, root.department, settings.departmentIndex + 1, root.stream, settings.streamIndex + 1);
+                        if (account.acceptableInput) {
+                            if (student.acceptableInput) {
+                                if (User.registerDB.isSupported(settings.programIndex + 1, settings.addmissionIndex + 1, settings.yearIndex + 1, settings.semsterIndex + 1, settings.sectionIndex + 1, settings.departmentIndex + 1, settings.streamIndex + 1))
+                                    User.registerNew(settings.userName, settings.imageSource, settings.bio, settings.studentId, root.program, root.addmission, settings.yearIndex + 1, settings.semsterIndex + 1, settings.sectionIndex + 1, root.department, settings.departmentIndex + 1, root.stream, settings.streamIndex + 1);
+                                else {
+                                    messageDialog.open();
+                                    sv.setCurrentIndex(0);
+                                }
+                            } else {
+                                student.animate();
+                                sv.setCurrentIndex(0);
+                            }
+                        } else {
+                            account.animate();
+                        }
                     }
                 }
             }

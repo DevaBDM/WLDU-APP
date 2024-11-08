@@ -5,6 +5,13 @@ Pane {
     id: root
     property alias userName: userNameTf.text
     property alias bio: bioTf.text
+    readonly property alias acceptableInput: userNameTf.acceptableInput
+    function animate() {
+        if (!userName.acceptableInput) {
+            invalidInputAnime.start();
+            userNameTf.forceActiveFocus();
+        }
+    }
     Column {
         anchors.fill: parent
         spacing: 10

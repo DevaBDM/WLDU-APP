@@ -58,6 +58,7 @@ Item {
                     fillMode: Image.PreserveAspectFit
                     cache: false
                     asynchronous: true
+                    source: "qrc:/qt/qml/WLDU/assets/icons/circle-user.svg"
                     TapHandler {
                         onSingleTapped: fileDialog.open()
                     }
