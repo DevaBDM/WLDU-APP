@@ -28,6 +28,7 @@ qt_add_executable(
   src/CacheManager/CacheManager.cpp
   include/News/news.h
   src/News/news.cpp
+  include/constant.h
   #
 )
 

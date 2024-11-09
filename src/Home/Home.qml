@@ -1,5 +1,7 @@
 import QtQuick
+import QtCore
 import QtQuick.Controls
+import QtQuick.Layouts
 import com.user.db
 import "../Schedule"
 import ".."
@@ -16,6 +18,14 @@ Page {
             }
         }
     ]
+    function resetURI(uri) {
+        User.News.Cache.reFetch(uri);
+        User.Schedule.Cache.reFetch(uri);
+    }
+    Settings {
+        property alias currentIndex: swipeView.currentIndex
+        property alias uri: uriTF.text
+    }
     state: !!swipeView.currentItem && swipeView.currentItem.full ? "full" : ""
     SwipeView {
         id: swipeView
@@ -41,17 +51,58 @@ Page {
                     fill: parent
                     margins: 20
                 }
-                model: User.profileInfo
-                delegate: ItemDelegate {
-                    width: ListView.view.width
-                    text: modelData
-                    leftPadding: 10
-                    MenuSeparator {
-                        anchors {
-                            left: parent.left
-                            leftMargin: 10
-                            right: parent.right
-                            verticalCenter: parent.bottom
+                model: ObjectModel {
+                    Label {
+                        width: !!ListView.view ? ListView.view.width : width
+                        text: "User info"
+                    }
+                    Pane {
+                        width: !!ListView.view ? ListView.view.width : width
+                        ColumnLayout {
+                            anchors.fill: parent
+                            Repeater {
+                                model: User.profileInfo
+                                delegate: ToolButton {
+                                    text: modelData
+                                    leftPadding: 10
+                                    MenuSeparator {
+                                        anchors {
+                                            left: parent.left
+                                            leftMargin: 10
+                                            right: parent.right
+                                            verticalCenter: parent.bottom
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    Label {
+                        width: !!ListView.view ? ListView.view.width : width
+                        text: "Settings"
+                    }
+                    Pane {
+                        width: !!ListView.view ? ListView.view.width : width
+                        ColumnLayout {
+                            anchors.fill: parent
+                            RowLayout {
+                                Layout.fillWidth: true
+                                ToolButton {
+                                    text: "Local server"
+                                    onClicked: {
+                                        if (uriTF.text === "") {
+                                            root.resetURI("http://10.42.0.1/WLDU");
+                                        } else {
+                                            root.resetURI(uriTF.text);
+                                        }
+                                    }
+                                }
+                                TextField {
+                                    id: uriTF
+                                    Layout.fillWidth: true
+                                    onAccepted: root.resetURI(text)
+                                }
+                            }
                         }
                     }
                 }
@@ -64,6 +115,7 @@ Page {
                         right: parent.right
                         top: parent.top
                     }
+                    z: -1
                 }
             }
         }

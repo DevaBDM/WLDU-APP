@@ -1,7 +1,8 @@
 #include "CacheManager/CacheManager.h"
+#include "constant.h"
 
 CacheManager::CacheManager(QObject *parent)
-    : QObject{parent}, m_p{}, m_progress{false} {
+    : QObject{parent}, m_p{}, m_progress{false}, m_host{Constant::k_hostname} {
     connect(&m_nm, &QNetworkAccessManager::finished,
             [](QNetworkReply *reply) { reply->deleteLater(); });
     setNetworkStatus(NetworkStatus::Waiting);
@@ -19,11 +20,21 @@ void CacheManager::reFetch() {
     update(m_p);
 };
 
+void CacheManager::reFetch(QString host) {
+    if (m_host == host)
+        return;
+    m_host = host;
+    if (m_p.isEmpty() || progress())
+        return;
+    setNetworkStatus(NetworkStatus::Waiting);
+    update(m_p);
+};
+
 void CacheManager::update(QString path) {
     QFile file("." + path + ".db");
     if (file.exists())
         file.open(QFile::ReadOnly);
-    QNetworkRequest nq{QUrl{"http://localhost/WLDU" + path + ".json"}};
+    QNetworkRequest nq{QUrl{m_host + path + ".json"}};
     QNetworkReply *reply = m_nm.get(nq);
     setProgress(true);
     connect(reply, &QNetworkReply::finished,
@@ -68,7 +79,7 @@ void CacheManager::update(QString path) {
 }
 
 void CacheManager::upgrade(QString path) {
-    QNetworkRequest nq{QUrl{"http://localhost/WLDU" + path + ".db"}};
+    QNetworkRequest nq{QUrl{m_host + path + ".db"}};
     QNetworkReply *reply = m_nm.get(nq);
     setProgress(true);
     connect(reply, &QNetworkReply::finished, this, [&, reply, path]() {

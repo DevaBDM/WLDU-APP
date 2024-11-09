@@ -36,6 +36,7 @@ class CacheManager : public QObject {
     explicit CacheManager(QString p, QObject *parent = nullptr);
 
     Q_INVOKABLE void reFetch();
+    Q_INVOKABLE void reFetch(QString);
 
     Q_INVOKABLE QString networkMessage(NetworkStatus) const;
     NetworkStatus networkStatus() const;
@@ -60,6 +61,7 @@ class CacheManager : public QObject {
     QString m_p;
     NetworkStatus m_networkStatus;
     bool m_progress;
+    QString m_host;
 };
 
 #endif // INCLUDE_CACHEMANAGER_CACHEMANAGER_H_
