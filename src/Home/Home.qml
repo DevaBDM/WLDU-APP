@@ -3,6 +3,7 @@ import QtQuick.Controls
 import com.user.db
 import "../Schedule"
 import ".."
+import "../News"
 
 Page {
     id: root
@@ -19,6 +20,13 @@ Page {
     SwipeView {
         id: swipeView
         anchors.fill: parent
+        Pane {
+            News {
+                id: news
+                anchors.fill: parent
+            }
+        }
+
         Pane {
             Schedule {
                 id: schedule
@@ -59,12 +67,6 @@ Page {
                 }
             }
         }
-        Button {
-            text: "One"
-        }
-        Button {
-            text: "Two"
-        }
     }
 
     footer: ToolBar {
@@ -72,6 +74,10 @@ Page {
             anchors.centerIn: parent
             Repeater {
                 model: ListModel {
+                    ListElement {
+                        name: "News"
+                        iconSource: "qrc:/qt/qml/WLDU/assets/icons/news.svg"
+                    }
                     ListElement {
                         name: "Schedule"
                         iconSource: "qrc:/qt/qml/WLDU/assets/icons/schedule.svg"

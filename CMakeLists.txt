@@ -26,6 +26,8 @@ qt_add_executable(
   src/Register/Register.cpp
   include/CacheManager/CacheManager.h
   src/CacheManager/CacheManager.cpp
+  include/News/news.h
+  src/News/news.cpp
   #
 )
 
@@ -47,6 +49,7 @@ qt_add_qml_module(
   src/Register/ProfilePictureRegister.qml
   src/Register/StudentRegister.qml
   src/Register/CutProfilePic.qml
+  src/News/News.qml
   RESOURCES
   assets/icons/back.svg
   assets/icons/edit-profile.svg
@@ -62,6 +65,7 @@ qt_add_qml_module(
   assets/icons/circle-check.svg
   assets/icons/circle-exclamation.svg
   assets/icons/arrow-rotate.svg
+  assets/icons/news.svg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp

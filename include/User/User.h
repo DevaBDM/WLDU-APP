@@ -2,6 +2,7 @@
 #define INCLUDE_USER_USER_H_
 
 #include "CacheManager/CacheManager.h"
+#include "News/news.h"
 #include "Register/Register.h"
 #include "Schedule/ScheduleModel.h"
 #include <QObject>
@@ -32,17 +33,19 @@ class User : public QObject {
         QStringList profileInfo READ profileInfo NOTIFY profileInfoChanged)
 
     Q_PROPERTY(Register *registerDB READ registerDB NOTIFY registerDBChanged)
-    Q_PROPERTY(Schedule_Model *Schedule READ Schedule NOTIFY ScheduleChanged)
-    Q_PROPERTY(CacheManager *Cache READ Cache NOTIFY CacheChanged)
+    Q_PROPERTY(Schedule_Model *Schedule READ Schedule NOTIFY scheduleChanged)
+    Q_PROPERTY(CacheManager *Cache READ Cache NOTIFY cacheChanged)
     Q_PROPERTY(CacheManager *RegisterCache READ registerCache NOTIFY
                    registerCacheChanged)
     Q_PROPERTY(CacheManager *UserCache READ userCache NOTIFY userCacheChanged)
+    Q_PROPERTY(NewsModel *News READ News NOTIFY newsChanged)
   public:
     explicit User(QObject *parent = nullptr);
 
     QString location() const;
     bool prepareUserDB();
     void prepareScheduleDB();
+    void prepareNewsDB();
     Register *registerDB();
     Schedule_Model *Schedule();
 
@@ -50,6 +53,7 @@ class User : public QObject {
     void setCache(CacheManager *);
     void setRegisterCache(CacheManager *);
     void setUserCache(CacheManager *);
+    void setNews(NewsModel *);
 
     bool registered() const;
     QString userName() const;
@@ -74,6 +78,7 @@ class User : public QObject {
     CacheManager *Cache() const;
     CacheManager *registerCache() const;
     CacheManager *userCache() const;
+    NewsModel *News() const;
 
     Q_INVOKABLE void registerNew(QString userName, QString pp_location,
                                  QString Bio, qint32 studentID, QString program,
@@ -84,11 +89,12 @@ class User : public QObject {
 
     QStringList profileInfo();
   signals:
-    void CacheChanged();
+    void newsChanged();
+    void cacheChanged();
     void registerCacheChanged();
     void userCacheChanged();
     void registerDBChanged();
-    void ScheduleChanged();
+    void scheduleChanged();
     void registeredSuccessfully();
     void profileInfoChanged();
     void registeredChanged();
@@ -116,6 +122,7 @@ class User : public QObject {
     CacheManager *m_registerCache;
     CacheManager *m_userCache;
     bool m_UserDBPrepared;
+    NewsModel *m_news;
 };
 
 #endif // INCLUDE_USER_USER_H_

@@ -8,7 +8,7 @@ User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
       m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
       m_register(nullptr), m_schedule{this}, m_mainCache{nullptr},
-      m_registerCache(nullptr), m_userCache{nullptr} {
+      m_registerCache(nullptr), m_userCache{nullptr}, m_news(nullptr) {
     QDir{}.mkpath("Register");
 
     if (!prepareUserDB() || !registered()) {
@@ -29,9 +29,11 @@ User::User(QObject *parent)
         });
     } else if (registered()) {
         prepareScheduleDB();
+        prepareNewsDB();
     }
 
     connect(this, &User::registeredSuccessfully, &User::prepareScheduleDB);
+    connect(this, &User::registeredSuccessfully, &User::prepareNewsDB);
 }
 
 bool User::prepareUserDB() {
@@ -48,8 +50,10 @@ bool User::prepareUserDB() {
 void User::prepareScheduleDB() {
     QDir{}.mkpath(location());
     m_schedule.setPath(location());
-    emit ScheduleChanged();
+    emit scheduleChanged();
 }
+
+void User::prepareNewsDB() { setNews(new NewsModel(this)); }
 
 bool User::registered() const { return m_sqlTableAccount.rowCount() > 0; }
 
@@ -190,7 +194,7 @@ void User::setCache(CacheManager *cache) {
         m_mainCache->deleteLater();
 
     m_mainCache = cache;
-    emit CacheChanged();
+    emit cacheChanged();
 }
 
 void User::setRegisterCache(CacheManager *cache) {
@@ -213,4 +217,17 @@ void User::setUserCache(CacheManager *cache) {
 
     m_userCache = cache;
     emit userCacheChanged();
+}
+
+NewsModel *User::News() const { return m_news; }
+void User::setNews(NewsModel *news) {
+    //
+    if (!news && !m_news || news == m_news)
+        return;
+
+    if (m_news)
+        m_news->deleteLater();
+
+    m_news = news;
+    emit newsChanged();
 }
