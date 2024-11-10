@@ -2,13 +2,16 @@
 #include "CacheManager/CacheManager.h"
 #include "Register/Register.h"
 #include "Schedule/ScheduleModel.h"
+#include "constant.h"
+#include <QDateTime>
 #include <QDir>
 
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
       m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
       m_register(nullptr), m_schedule{}, m_mainCache{nullptr},
-      m_registerCache(nullptr), m_userCache{nullptr}, m_news(this) {
+      m_registerCache(nullptr), m_userCache{nullptr}, m_news(this),
+      m_downloadManger{this} {
     QDir{}.mkpath("Register");
 
     if (!prepareUserDB() || !registered()) {
@@ -117,6 +120,8 @@ void User::registerNew(QString userName, QString pp_location, QString Bio,
         r.setValue("user_name", userName);
         r.setValue("pp_location", pp_location);
         r.setValue("Bio", Bio);
+        r.setValue("update_date", QDateTime::currentDateTimeUtc().toString(
+                                      "yyyy-MM-dd hh:mm:ss"));
         m_sqlTableAccount.insertRecord(-1, r);
         m_sqlTableAccount.select();
 
@@ -132,6 +137,8 @@ void User::registerNew(QString userName, QString pp_location, QString Bio,
         rr.setValue("Department", department);
         rr.setValue("pk_Stream", streamIndex);
         rr.setValue("Stream", stream);
+        rr.setValue("update_date", QDateTime::currentDateTimeUtc().toString(
+                                       "yyyy-MM-dd hh:mm:ss"));
         m_sqlTableStudent.insertRecord(-1, rr);
         m_sqlTableStudent.select();
 
@@ -216,3 +223,10 @@ void User::setUserCache(CacheManager *cache) {
 }
 
 NewsModel *User::News() { return &m_news; }
+
+DownloadManger *User::Download() { return &m_downloadManger; };
+
+void User::downloadFile(QString saveName, QString hash) {
+    m_downloadManger.download(Constant::k_hostname + "/" + location(), saveName,
+                              hash);
+}

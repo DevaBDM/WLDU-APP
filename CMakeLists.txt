@@ -28,6 +28,8 @@ qt_add_executable(
   src/CacheManager/CacheManager.cpp
   include/Schedule/FilesModel.h
   src/Schedule/FilesModel.cpp
+  include/User/DownloadManger.h
+  src/User/DownloadManger.cpp
   include/News/news.h
   src/News/news.cpp
   include/constant.h

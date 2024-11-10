@@ -90,10 +90,11 @@ ListView {
                 Repeater {
                     model: User.Schedule.FilesModel
                     delegate: ItemDelegate {
-                        // width: ListView.view.width
                         Layout.fillWidth: true
+                        enabled: !User.Download.downloading || User.Download.currentHash !== fileHash
                         icon.source: "qrc:/qt/qml/WLDU/assets/icons/download.svg"
-                        text: fileName
+                        text: User.Download.downloading && User.Download.currentHash === fileHash ? User.Download.progress + "% " + fileName : fileName
+                        onClicked: User.downloadFile(fileName, fileHash)
                     }
                 }
             }

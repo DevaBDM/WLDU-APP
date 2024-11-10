@@ -5,6 +5,7 @@
 #include "News/news.h"
 #include "Register/Register.h"
 #include "Schedule/ScheduleModel.h"
+#include "User/DownloadManger.h"
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlRecord>
@@ -39,6 +40,7 @@ class User : public QObject {
                    registerCacheChanged)
     Q_PROPERTY(CacheManager *UserCache READ userCache NOTIFY userCacheChanged)
     Q_PROPERTY(NewsModel *News READ News NOTIFY newsChanged)
+    Q_PROPERTY(DownloadManger *Download READ Download NOTIFY downloadChanged)
   public:
     explicit User(QObject *parent = nullptr);
 
@@ -47,6 +49,7 @@ class User : public QObject {
     void prepareScheduleDB();
     Register *registerDB();
     Schedule_Model *Schedule();
+    DownloadManger *Download();
 
     void setProfileInfo();
     void setCache(CacheManager *);
@@ -84,9 +87,11 @@ class User : public QObject {
                                  int section, QString department,
                                  int departmentIndex, QString stream,
                                  int streamIndex);
+    Q_INVOKABLE void downloadFile(QString saveName, QString hash);
 
     QStringList profileInfo();
   signals:
+    void downloadChanged();
     void newsChanged();
     void cacheChanged();
     void registerCacheChanged();
@@ -121,6 +126,7 @@ class User : public QObject {
     CacheManager *m_userCache;
     bool m_UserDBPrepared;
     NewsModel m_news;
+    DownloadManger m_downloadManger;
 };
 
 #endif // INCLUDE_USER_USER_H_
