@@ -2,6 +2,7 @@
 #define INCLUDE_SRC_SCHEDULEMODEL_H_
 
 #include "CacheManager/CacheManager.h"
+#include "Schedule/FilesModel.h"
 #include <QAbstractListModel>
 #include <QDate>
 #include <QObject>
@@ -29,9 +30,10 @@ class Schedule_Model : public QAbstractListModel {
     Q_PROPERTY(QVariant date READ date NOTIFY dateChanged)
     Q_PROPERTY(QVariant weekDay READ weekDay NOTIFY dateChanged)
     Q_PROPERTY(CacheManager *Cache READ Cache NOTIFY CacheChanged)
+    Q_PROPERTY(Files_Model *FilesModel READ FilesModel NOTIFY FilesModelChanged)
   public:
-    explicit Schedule_Model(QObject *parent = nullptr);
-    explicit Schedule_Model(QString p, QObject *parent = nullptr);
+    explicit Schedule_Model(QAbstractListModel *parent = nullptr);
+    explicit Schedule_Model(QString p, QAbstractListModel *parent = nullptr);
     enum Role {
         startTimeRole = Qt::UserRole + 1,
         endTimeRole,
@@ -75,6 +77,7 @@ class Schedule_Model : public QAbstractListModel {
     QVariant date() const;
     QVariant weekDay() const;
     CacheManager *Cache() const;
+    Files_Model *FilesModel();
 
   private:
     bool prepareModelDB();
@@ -90,6 +93,7 @@ class Schedule_Model : public QAbstractListModel {
     int epoch() const;
 
   signals:
+    void FilesModelChanged();
     void CacheChanged();
     void currentRowChanged(int);
 
@@ -117,6 +121,7 @@ class Schedule_Model : public QAbstractListModel {
     QString m_filter;
     QString m_path;
     CacheManager *m_mainCache;
+    Files_Model m_filesModel;
 };
 
 #endif // INCLUDE_SRC_SCHEDULEMODEL_H_

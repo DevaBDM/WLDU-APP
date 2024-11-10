@@ -39,8 +39,6 @@ ListView {
                     leftMargin: 20
                     rightMargin: 20
                 }
-                spacing: 10
-                property var currentSchedule: 0
                 Label {
                     Layout.fillWidth: true
                     text: !!User.Schedule.title ? User.Schedule.title : ""
@@ -79,6 +77,24 @@ ListView {
                     Layout.fillWidth: true
                     text: !!User.Schedule.description ? User.Schedule.description : ""
                     wrapMode: Label.Wrap
+                }
+                Label {
+                    Layout.fillWidth: true
+                    text: User.Schedule.FilesModel.rowCount ? "Attachments" : "No attachments !!"
+                    elide: Label.ElideRight
+                    font {
+                        pixelSize: 30
+                        bold: true
+                    }
+                }
+                Repeater {
+                    model: User.Schedule.FilesModel
+                    delegate: ItemDelegate {
+                        // width: ListView.view.width
+                        Layout.fillWidth: true
+                        icon.source: "qrc:/qt/qml/WLDU/assets/icons/download.svg"
+                        text: fileName
+                    }
                 }
             }
         }

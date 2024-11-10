@@ -7,7 +7,7 @@
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
       m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
-      m_register(nullptr), m_schedule{this}, m_mainCache{nullptr},
+      m_register(nullptr), m_schedule{}, m_mainCache{nullptr},
       m_registerCache(nullptr), m_userCache{nullptr}, m_news(this) {
     QDir{}.mkpath("Register");
 

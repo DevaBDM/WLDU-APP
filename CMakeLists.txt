@@ -26,6 +26,8 @@ qt_add_executable(
   src/Register/Register.cpp
   include/CacheManager/CacheManager.h
   src/CacheManager/CacheManager.cpp
+  include/Schedule/FilesModel.h
+  src/Schedule/FilesModel.cpp
   include/News/news.h
   src/News/news.cpp
   include/constant.h
@@ -67,6 +69,7 @@ qt_add_qml_module(
   assets/icons/circle-exclamation.svg
   assets/icons/arrow-rotate.svg
   assets/icons/news.svg
+  assets/icons/download.svg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp

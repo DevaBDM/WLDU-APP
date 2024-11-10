@@ -1,21 +1,24 @@
 #include "Schedule/ScheduleModel.h"
 #include <QFile>
 
-Schedule_Model::Schedule_Model(QObject *parent)
+Schedule_Model::Schedule_Model(QAbstractListModel *parent)
     : QAbstractListModel{parent},
       m_db{QSqlDatabase::addDatabase("QSQLITE", "Schedule")},
-      m_sqlTable(parent, m_db), m_currentRow(0), m_date(QDate::currentDate()),
+      m_sqlTable(this, m_db), m_currentRow(0), m_date(QDate::currentDate()),
       m_filter{
           "(beginDate <= '%1' OR beginDate IS NULL) AND (expireDate > '%1' "
           "OR expireDate IS NULL) AND weekday = strftime('%w','%1') OR "
           "onceDate = '%1'"},
-      m_mainCache(nullptr) {
+      m_mainCache(nullptr), m_filesModel{m_db, this} {
     connectCurrentRow();
     connect(this, &Schedule_Model::dateChanged, this,
             &Schedule_Model::setFilter);
+    connect(this, &Schedule_Model::currentRowChanged, [&]() {
+        m_filesModel.setFilter(slipID().toInt(), scheduleID().toInt());
+    });
 }
 
-Schedule_Model::Schedule_Model(QString p, QObject *parent)
+Schedule_Model::Schedule_Model(QString p, QAbstractListModel *parent)
     : Schedule_Model(parent) {
     setPath(p);
 }
@@ -175,6 +178,7 @@ bool Schedule_Model::prepareModelDB() {
         m_db.close();
     m_db.setDatabaseName(m_path + ".db");
     m_db.open();
+    m_filesModel.prepareModelDB();
     m_sqlTable.setTable("ScheduleModel");
     return setFilter();
 }
@@ -226,3 +230,5 @@ void Schedule_Model::setCache(CacheManager *cache) {
     m_mainCache = cache;
     emit CacheChanged();
 }
+
+Files_Model *Schedule_Model::FilesModel() { return &m_filesModel; }
