@@ -45,7 +45,6 @@ class User : public QObject {
     QString location() const;
     bool prepareUserDB();
     void prepareScheduleDB();
-    void prepareNewsDB();
     Register *registerDB();
     Schedule_Model *Schedule();
 
@@ -53,7 +52,6 @@ class User : public QObject {
     void setCache(CacheManager *);
     void setRegisterCache(CacheManager *);
     void setUserCache(CacheManager *);
-    void setNews(NewsModel *);
 
     bool registered() const;
     QString userName() const;
@@ -78,7 +76,7 @@ class User : public QObject {
     CacheManager *Cache() const;
     CacheManager *registerCache() const;
     CacheManager *userCache() const;
-    NewsModel *News() const;
+    NewsModel *News();
 
     Q_INVOKABLE void registerNew(QString userName, QString pp_location,
                                  QString Bio, qint32 studentID, QString program,
@@ -122,7 +120,7 @@ class User : public QObject {
     CacheManager *m_registerCache;
     CacheManager *m_userCache;
     bool m_UserDBPrepared;
-    NewsModel *m_news;
+    NewsModel m_news;
 };
 
 #endif // INCLUDE_USER_USER_H_

@@ -84,10 +84,10 @@ Item {
 
         ListView {
             id: lv
-            clip: true
             Layout.fillWidth: true
             Layout.fillHeight: true
             Layout.preferredHeight: 12
+            spacing: 10
 
             header: Item {
                 id: header
