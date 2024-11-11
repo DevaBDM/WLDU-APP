@@ -2,11 +2,22 @@ import QtCore
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import WLDU
 import com.user.db
 
 Item {
     id: root
     signal done
+    Timer {
+        id: timer
+        interval: 3 * 1000
+        repeat: true
+        running: !!User.UserCache && !User.UserCache.progress && User.UserCache.networkStatus != CacheManager.Connected
+        onTriggered: {
+            if (!!User.UserCache)
+                User.UserCache.reFetch();
+        }
+    }
 
     Connections {
         id: registerSignal

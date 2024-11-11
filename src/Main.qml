@@ -2,6 +2,7 @@ import QtQuick
 import QtCore
 import QtQuick.Layouts
 import QtQuick.Controls
+import WLDU
 import com.user.db
 import "Schedule"
 import "Register"
@@ -84,6 +85,16 @@ ApplicationWindow {
         id: welcome
         Welcome {
             property bool full: true
+            Timer {
+                id: timer
+                interval: 3 * 1000
+                repeat: true
+                running: !User.registerDB && !!User.RegisterCache && !User.RegisterCache.progress
+                onTriggered: {
+                    if (!!User.RegisterCache)
+                        User.RegisterCache.reFetch();
+                }
+            }
             info: !!User.RegisterCache ? User.RegisterCache.networkMessage(User.RegisterCache.networkStatus) : "Register"
             enabled: !!User.RegisterCache ? !User.RegisterCache.progress : true
             onRegisterClicked: {
