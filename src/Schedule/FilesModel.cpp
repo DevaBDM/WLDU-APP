@@ -1,11 +1,13 @@
 #include "Schedule/FilesModel.h"
+#include "constant.h"
 #include <QSqlRecord>
 
-Files_Model::Files_Model(QSqlDatabase &db, QAbstractListModel *parent)
+Files_Model::Files_Model(QSqlDatabase &db, QString path,
+                         QAbstractListModel *parent)
     : QAbstractListModel{parent},
       m_filter("(pk_Slip = %1 or pk_Slip IS NULL) and (pk_Schedule = %2 or "
                "pk_Schedule IS NULL)"),
-      m_db(db), m_sqlTable{this, db} {}
+      m_path(path), m_db(db), m_sqlTable{this, db} {}
 int Files_Model::rowCount(const QModelIndex &parent) const {
     return m_sqlTable.rowCount();
 }
@@ -69,4 +71,19 @@ void Files_Model::prepareModelDB() {
         return;
     m_sqlTable.setTable("FilesModel");
     setFilter(0, 0);
+}
+
+Downloader *Files_Model::downloader(int row) {
+    if (0 > row || row > rowCount())
+        return nullptr;
+    return m_downloadManager.download(
+        Constant::k_hostname + "/" + m_path,
+        m_sqlTable.record(row).value("name").toString(),
+        m_sqlTable.record(row).value("hash").toString());
+}
+
+void Files_Model::setPath(QString path) {
+    if (m_path == path)
+        return;
+    m_path = path;
 }

@@ -91,10 +91,22 @@ ListView {
                     model: User.Schedule.FilesModel
                     delegate: ItemDelegate {
                         Layout.fillWidth: true
-                        enabled: !User.Download.downloading || User.Download.currentHash !== fileHash
-                        icon.source: "qrc:/qt/qml/WLDU/assets/icons/download.svg"
-                        text: User.Download.downloading && User.Download.currentHash === fileHash ? User.Download.progress + "% " + fileName : fileName
-                        onClicked: User.downloadFile(fileName, fileHash)
+                        property var download: User.Schedule.FilesModel.downloader(index)
+                        enabled: !!download && (!download.downloading && !download.waitting)
+                        icon.source: if (!!download) {
+                            if (download.downloaded)
+                                return "qrc:/qt/qml/WLDU/assets/icons/check.svg";
+                            else if (download.downloading || download.waitting)
+                                return "qrc:/qt/qml/WLDU/assets/icons/arrow-rotate.svg";
+                            else
+                                return "qrc:/qt/qml/WLDU/assets/icons/download.svg";
+                        } else
+                            return ""
+                        text: !!download && download.downloading ? download.progress + "% " + fileName : fileName
+                        onClicked: {
+                            if (!!download)
+                                download.startDownload();
+                        }
                     }
                 }
             }

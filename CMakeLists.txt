@@ -30,6 +30,8 @@ qt_add_executable(
   src/Schedule/FilesModel.cpp
   include/User/DownloadManger.h
   src/User/DownloadManger.cpp
+  include/User/Downloader.h
+  src/User/Downloader.cpp
   include/News/news.h
   src/News/news.cpp
   include/constant.h
@@ -79,7 +81,7 @@ qt_add_qml_module(
 )
 
 target_include_directories(appWLDU PRIVATE include include/CacheManager
-                                           qmltypes/include)
+                                           qmltypes/include include/User)
 target_link_libraries(appWLDU PRIVATE Qt6::Quick Qt6::Sql)
 
 add_custom_target(

@@ -1,6 +1,8 @@
 #ifndef INCLUDE_SCHEDULE_FILESMODEL_H_
 #define INCLUDE_SCHEDULE_FILESMODEL_H_
 
+#include "User/DownloadManger.h"
+#include "User/Downloader.h"
 #include <QAbstractListModel>
 #include <QObject>
 #include <QSqlDatabase>
@@ -10,7 +12,7 @@ class Files_Model : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(int rowCount READ rowCount NOTIFY rowCountChanged)
   public:
-    explicit Files_Model(QSqlDatabase &db,
+    explicit Files_Model(QSqlDatabase &db, QString path,
                          QAbstractListModel *parent = nullptr);
     enum Role {
         codeRole = Qt::UserRole + 1,
@@ -31,9 +33,13 @@ class Files_Model : public QAbstractListModel {
 
     QVariant data(const QModelIndex &index, int role) const override;
 
+    Q_INVOKABLE Downloader *downloader(int);
+
     // properties
     void prepareModelDB();
     void setFilter(int slipID, int scheduleID = 0);
+
+    void setPath(QString);
 
   private:
   public slots:
@@ -45,6 +51,8 @@ class Files_Model : public QAbstractListModel {
     QSqlDatabase &m_db;
     QSqlTableModel m_sqlTable;
     QString m_filter;
+    DownloadManger m_downloadManager;
+    QString m_path;
 };
 
 #endif // INCLUDE_SCHEDULE_FILESMODEL_H_

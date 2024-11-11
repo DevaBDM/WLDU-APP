@@ -9,7 +9,7 @@ Schedule_Model::Schedule_Model(QAbstractListModel *parent)
           "(beginDate <= '%1' OR beginDate IS NULL) AND (expireDate > '%1' "
           "OR expireDate IS NULL) AND weekday = strftime('%w','%1') OR "
           "onceDate = '%1'"},
-      m_mainCache(nullptr), m_filesModel{m_db, this} {
+      m_mainCache(nullptr), m_filesModel{m_db, m_path, this} {
     connectCurrentRow();
     connect(this, &Schedule_Model::dateChanged, this,
             &Schedule_Model::setFilter);
@@ -211,6 +211,7 @@ void Schedule_Model::connectCurrentRow() {
 }
 
 void Schedule_Model::setPath(QString p) {
+    m_filesModel.setPath(p);
     m_path = p + "/schedule";
     prepareModelDB();
     setCache(new CacheManager{"/" + m_path, this});

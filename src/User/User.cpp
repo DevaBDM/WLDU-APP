@@ -2,7 +2,6 @@
 #include "CacheManager/CacheManager.h"
 #include "Register/Register.h"
 #include "Schedule/ScheduleModel.h"
-#include "constant.h"
 #include <QDateTime>
 #include <QDir>
 
@@ -10,8 +9,7 @@ User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
       m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
       m_register(nullptr), m_schedule{}, m_mainCache{nullptr},
-      m_registerCache(nullptr), m_userCache{nullptr}, m_news(this),
-      m_downloadManger{this} {
+      m_registerCache(nullptr), m_userCache{nullptr}, m_news(this) {
     QDir{}.mkpath("Register");
 
     if (!prepareUserDB() || !registered()) {
@@ -223,10 +221,3 @@ void User::setUserCache(CacheManager *cache) {
 }
 
 NewsModel *User::News() { return &m_news; }
-
-DownloadManger *User::Download() { return &m_downloadManger; };
-
-void User::downloadFile(QString saveName, QString hash) {
-    m_downloadManger.download(Constant::k_hostname + "/" + location(), saveName,
-                              hash);
-}
