@@ -32,7 +32,7 @@ Downloader *DownloadManger::download(QString host, QString saveName,
     Downloader *d{
         new Downloader{m_db, m_nm, hash, m_path, saveName, host, this}};
     connect(d, &Downloader::done, this,
-            [&, saveName, hash]() { cacheDownloaded(saveName, hash); });
+            [&, d]() { cacheDownloaded(d->saveName(), d->hash()); });
     m_downloaders[hash] = d;
     return d;
 }

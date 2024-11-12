@@ -17,6 +17,7 @@ Downloader::Downloader(QSqlDatabase &db, QNetworkAccessManager &nm,
     m_sql_query.addBindValue(hash);
     m_sql_query.exec();
     if (m_sql_query.next()) {
+        m_saveName = m_sql_query.value("fileName").toString();
         setDownloaded(true);
     }
     m_sql_query.clear();
