@@ -39,14 +39,34 @@ ListView {
                     leftMargin: 20
                     rightMargin: 20
                 }
-                Label {
+                RowLayout {
                     Layout.fillWidth: true
-                    text: !!User.Schedule.title ? User.Schedule.title : ""
-                    fontSizeMode: Label.VerticalFit
-                    elide: Label.ElideRight
-                    font {
-                        pixelSize: 50
-                        bold: true
+                    Label {
+                        text: !!User.Schedule.title ? User.Schedule.title : ""
+                        fontSizeMode: Label.VerticalFit
+                        elide: Label.ElideRight
+                        Layout.fillWidth: true
+                        font {
+                            pixelSize: 50
+                            bold: true
+                        }
+                    }
+                    Label {
+                        text: !!User.Schedule.type ? User.Schedule.type : ""
+                        fontSizeMode: Label.VerticalFit
+                        elide: Label.ElideRight
+                        Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                        Rectangle {
+                            width: 10
+                            height: 10
+                            radius: 5
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                right: parent.left
+                            }
+                            property var type: parent.text
+                            color: type === "Class" ? "green" : type === "Lab" ? "yellow" : type === "Final Exam" ? "red" : type === "Mid Exam" || type === "Exam" ? "orange" : "white"
+                        }
                     }
                 }
                 Label {
@@ -316,6 +336,16 @@ ListView {
                         }
                     }
                     Label {
+                        Rectangle {
+                            width: 10
+                            height: 10
+                            radius: 5
+                            anchors {
+                                verticalCenter: parent.verticalCenter
+                                right: parent.left
+                            }
+                            color: type === "Class" ? "green" : type === "Lab" ? "yellow" : type === "Final Exam" ? "red" : type === "Mid Exam" || type === "Exam" ? "orange" : "white"
+                        }
                         Layout.alignment: Qt.AlignRight
                         Layout.maximumWidth: 60
                         Layout.minimumWidth: 25
