@@ -2,7 +2,6 @@
 #define INCLUDE_CACHEMANAGER_CACHEMANAGER_H_
 
 #include <QCryptographicHash>
-#include <QDebug>
 #include <QFile>
 #include <QJsonDocument>
 #include <QJsonObject>

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 project(
   WLDU
-  VERSION 0.1
+  VERSION 0.4.5
   LANGUAGES CXX)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)

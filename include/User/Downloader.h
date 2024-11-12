@@ -1,7 +1,6 @@
 #ifndef INCLUDE_USER_DOWNLOADER_H_
 #define INCLUDE_USER_DOWNLOADER_H_
 
-#include <QCryptographicHash>
 #include <QFile>
 #include <QHash>
 #include <QNetworkAccessManager>
@@ -33,13 +32,15 @@ class Downloader : public QObject {
     bool downloaded() const;
 
     QString hash() const;
+    QString saveName() const;
 
     void setWaitting(bool newWaitting);
     void setDownloading(bool newDownloading);
     void setProgress(double newProgress);
     void setDownloaded(bool newDownloaded);
 
-    void setHash(const QString &newHash);
+    void setHash(const QString &);
+    void setHost(const QString &);
 
   signals:
     void waittingChanged();

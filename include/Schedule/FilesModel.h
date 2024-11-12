@@ -34,12 +34,13 @@ class Files_Model : public QAbstractListModel {
     QVariant data(const QModelIndex &index, int role) const override;
 
     Q_INVOKABLE Downloader *downloader(int);
+    Q_INVOKABLE void setHost(const QString &);
 
     // properties
     void prepareModelDB();
     void setFilter(int slipID, int scheduleID = 0);
 
-    void setPath(QString);
+    void setPath(const QString &);
 
   private:
   public slots:
@@ -51,7 +52,7 @@ class Files_Model : public QAbstractListModel {
     QSqlDatabase &m_db;
     QSqlTableModel m_sqlTable;
     QString m_filter;
-    DownloadManger m_downloadManager;
+    DownloadManger *m_downloadManager;
     QString m_path;
 };
 

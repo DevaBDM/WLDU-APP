@@ -75,7 +75,7 @@ QString Downloader::fileHash(QFile &file) {
 
 void Downloader::startDownload() {
     if (downloaded()) {
-        qDebug() << "Opening file";
+        qDebug() << "Opening file" << m_saveName;
         return;
     } else if (downloading())
         return;
@@ -128,3 +128,11 @@ void Downloader::startDownload() {
     connect(reply, &QNetworkReply::downloadProgress,
             [&, reply](double r, double t) { setProgress(r / t); });
 }
+
+void Downloader::setHost(const QString &host) {
+    if (m_host == host)
+        return;
+    m_host = host;
+}
+
+QString Downloader::saveName() const { return m_saveName; };

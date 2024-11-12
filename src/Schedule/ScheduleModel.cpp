@@ -210,7 +210,7 @@ void Schedule_Model::connectCurrentRow() {
             &Schedule_Model::seenChanged);
 }
 
-void Schedule_Model::setPath(QString p) {
+void Schedule_Model::setPath(const QString &p) {
     m_filesModel.setPath(p);
     m_path = p + "/schedule";
     prepareModelDB();

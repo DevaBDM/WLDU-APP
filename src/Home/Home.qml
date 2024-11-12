@@ -21,6 +21,7 @@ Page {
     function resetURI(uri) {
         User.News.Cache.reFetch(uri);
         User.Schedule.Cache.reFetch(uri);
+        User.Schedule.FilesModel.setHost(uri);
     }
     Settings {
         property alias currentIndex: swipeView.currentIndex

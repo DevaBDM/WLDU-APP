@@ -1,4 +1,5 @@
 #include "Schedule/FilesModel.h"
+#include "DownloadManger.h"
 #include "constant.h"
 #include <QSqlRecord>
 
@@ -7,7 +8,8 @@ Files_Model::Files_Model(QSqlDatabase &db, QString path,
     : QAbstractListModel{parent},
       m_filter("(pk_Slip = %1 or pk_Slip IS NULL) and (pk_Schedule = %2 or "
                "pk_Schedule IS NULL)"),
-      m_path(path), m_db(db), m_sqlTable{this, db} {}
+      m_path(path), m_db(db), m_sqlTable{this, db}, m_downloadManager(nullptr) {
+}
 int Files_Model::rowCount(const QModelIndex &parent) const {
     return m_sqlTable.rowCount();
 }
@@ -76,14 +78,25 @@ void Files_Model::prepareModelDB() {
 Downloader *Files_Model::downloader(int row) {
     if (0 > row || row > rowCount())
         return nullptr;
-    return m_downloadManager.download(
-        Constant::k_hostname + "/" + m_path,
+    if (!m_downloadManager)
+        return nullptr;
+    return m_downloadManager->download(
         m_sqlTable.record(row).value("name").toString(),
         m_sqlTable.record(row).value("hash").toString());
 }
 
-void Files_Model::setPath(QString path) {
+void Files_Model::setPath(const QString &path) {
     if (m_path == path)
         return;
     m_path = path;
+    if (m_downloadManager)
+        m_downloadManager->setSubHost(path);
+    else {
+        m_downloadManager = new DownloadManger{m_path, this};
+    }
+}
+
+void Files_Model::setHost(const QString &host) {
+    if (m_downloadManager)
+        m_downloadManager->setHost(host);
 }

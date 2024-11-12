@@ -17,11 +17,16 @@
 class DownloadManger : public QObject {
     Q_OBJECT
   public:
-    DownloadManger(QObject *parent = nullptr);
+    DownloadManger(QString subHost, QObject *parent = nullptr);
 
-    Downloader *download(QString host, QString saveName, QString hash);
+    Downloader *download(QString saveName, QString hash, QString host = {});
 
     void cacheDownloaded(QString saveName, QString hash);
+    void setSubHost(const QString &);
+    void setHost(const QString &);
+
+  private:
+    void updateDownloadersHost();
 
   signals:
     void currentHashChanged();
@@ -29,7 +34,9 @@ class DownloadManger : public QObject {
   private:
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTable;
-    QString m_path;
+    QString m_savePath;
+    QString m_subHost;
+    QString m_host;
 
     QNetworkAccessManager m_nm;
 
