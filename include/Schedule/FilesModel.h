@@ -11,6 +11,8 @@
 class Files_Model : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(int rowCount READ rowCount NOTIFY rowCountChanged)
+    Q_PROPERTY(DownloadManger *DownloadManger READ downloadManger NOTIFY
+                   downloadMangerChanged)
   public:
     explicit Files_Model(QSqlDatabase &db, QString path,
                          QAbstractListModel *parent = nullptr);
@@ -42,11 +44,14 @@ class Files_Model : public QAbstractListModel {
 
     void setPath(const QString &);
 
+    DownloadManger *downloadManger() const;
+
   private:
   public slots:
 
   signals:
     void rowCountChanged();
+    void downloadMangerChanged();
 
   private:
     QSqlDatabase &m_db;

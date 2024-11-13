@@ -7,6 +7,7 @@ import com.user.db
 import "Schedule"
 import "Register"
 import "Home"
+import "User"
 
 ApplicationWindow {
     id: root
@@ -68,6 +69,14 @@ ApplicationWindow {
                     }
                 }
             }
+            ToolButton {
+                id: downloadMangerTB
+                icon.source: "qrc:/qt/qml/WLDU/assets/icons/download.svg"
+                leftPadding: 0
+                onClicked: {
+                    stackViewHome.push(downloadManger);
+                }
+            }
         }
     }
 
@@ -123,4 +132,12 @@ ApplicationWindow {
         Home {}
     }
 
+    Component {
+        id: downloadManger
+        DownloadManger {
+            id: dm
+            StackView.onRemoved: downloadMangerTB.visible = true
+            StackView.onActivating: downloadMangerTB.visible = false
+        }
+    }
 }

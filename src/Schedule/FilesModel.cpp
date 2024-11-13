@@ -1,5 +1,4 @@
 #include "Schedule/FilesModel.h"
-#include "DownloadManger.h"
 #include "constant.h"
 #include <QSqlRecord>
 
@@ -93,10 +92,15 @@ void Files_Model::setPath(const QString &path) {
         m_downloadManager->setSubHost(path);
     else {
         m_downloadManager = new DownloadManger{m_path, this};
+        emit downloadMangerChanged();
     }
 }
 
 void Files_Model::setHost(const QString &host) {
     if (m_downloadManager)
         m_downloadManager->setHost(host);
+}
+
+DownloadManger *Files_Model::downloadManger() const {
+    return m_downloadManager;
 }

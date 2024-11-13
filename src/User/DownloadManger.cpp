@@ -4,8 +4,9 @@
 #include <QDateTime>
 #include <QSqlError>
 
-DownloadManger::DownloadManger(QString subHost, QObject *parent)
-    : m_db{QSqlDatabase::addDatabase("QSQLITE", "DownloadCache")},
+DownloadManger::DownloadManger(QString subHost, QAbstractListModel *parent)
+    : QAbstractListModel{parent},
+      m_db{QSqlDatabase::addDatabase("QSQLITE", "DownloadCache")},
       m_sqlTable(this, m_db), m_savePath{QStandardPaths::writableLocation(
                                              QStandardPaths::CacheLocation) +
                                          "/DownloadCache"},
@@ -26,6 +27,33 @@ DownloadManger::DownloadManger(QString subHost, QObject *parent)
             [](QNetworkReply *reply) { reply->deleteLater(); });
 }
 
+int DownloadManger::rowCount(const QModelIndex &parent) const {
+    return m_sqlTable.rowCount();
+}
+
+QHash<int, QByteArray> DownloadManger::roleNames() const {
+    static QHash<int, QByteArray> roleNames;
+
+    roleNames[fileNameRole] = "fileName";
+    roleNames[hashRole] = "hash";
+
+    return roleNames;
+}
+
+QVariant DownloadManger::data(const QModelIndex &index, int role) const {
+    int row{index.row()};
+    if (0 > row || row > rowCount())
+        return QVariant{};
+    switch (Role(role)) {
+    case fileNameRole:
+        return m_sqlTable.record(row).value("fileName");
+    case hashRole:
+        return m_sqlTable.record(row).value("hash");
+        break;
+    }
+    return {};
+}
+
 Downloader *DownloadManger::download(QString saveName, QString hash,
                                      QString host) {
     if (m_downloaders.contains(hash))
@@ -40,6 +68,7 @@ Downloader *DownloadManger::download(QString saveName, QString hash,
 }
 
 void DownloadManger::cacheDownloaded(QString saveName, QString hash) {
+    beginInsertRows(QModelIndex{}, rowCount(), rowCount());
     QSqlRecord r{m_sqlTable.record()};
     r.setValue("fileName", saveName);
     r.setValue("hash", hash);
@@ -47,6 +76,7 @@ void DownloadManger::cacheDownloaded(QString saveName, QString hash) {
                QDateTime::currentDateTimeUtc().toString("yyyy-MM-dd hh:mm:ss"));
     m_sqlTable.insertRecord(-1, r);
     m_sqlTable.select();
+    endInsertRows();
 }
 
 void DownloadManger::setSubHost(const QString &host) {
@@ -68,4 +98,22 @@ void DownloadManger::updateDownloadersHost() {
          ++it) {
         it.value()->setHost(m_host + "/" + m_subHost);
     }
+}
+
+void DownloadManger::deleteFile(int row) {
+    if (!QFile{m_savePath + "/" +
+               m_sqlTable.record(row).value("fileName").toString()}
+             .remove())
+        return;
+    QString hash = m_sqlTable.record(row).value("hash").toString();
+    if (m_downloaders.contains(hash))
+        m_downloaders.value(hash)->setDownloaded(false);
+    beginRemoveRows(QModelIndex{}, row, row);
+    m_sqlTable.removeRows(row, 1);
+
+    bool rm = m_sqlTable.submit();
+    m_sqlTable.select();
+
+    endRemoveRows();
+    emit rowCountChanged();
 }

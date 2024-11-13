@@ -57,6 +57,7 @@ qt_add_qml_module(
   src/Register/StudentRegister.qml
   src/Register/CutProfilePic.qml
   src/News/News.qml
+  src/User/DownloadManger.qml
   RESOURCES
   assets/icons/back.svg
   assets/icons/edit-profile.svg
@@ -74,6 +75,7 @@ qt_add_qml_module(
   assets/icons/arrow-rotate.svg
   assets/icons/news.svg
   assets/icons/download.svg
+  assets/icons/trash.svg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp
