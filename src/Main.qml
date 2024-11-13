@@ -73,7 +73,7 @@ ApplicationWindow {
                 id: downloadMangerTB
                 icon.source: "qrc:/qt/qml/WLDU/assets/icons/download.svg"
                 leftPadding: 0
-                visible: !!User.Schedule.FilesModel.DownloadManger 
+                visible: !!User.Schedule.FilesModel.DownloadManger
                 onClicked: {
                     stackViewHome.push(downloadManger);
                 }

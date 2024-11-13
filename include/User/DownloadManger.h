@@ -35,6 +35,7 @@ class DownloadManger : public QAbstractListModel {
     void cacheDownloaded(QString saveName, QString hash);
     void setSubHost(const QString &);
     void setHost(const QString &);
+    Q_INVOKABLE void search(const QString &);
 
   private:
     void updateDownloadersHost();

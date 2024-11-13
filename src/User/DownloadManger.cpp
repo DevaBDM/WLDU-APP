@@ -117,3 +117,11 @@ void DownloadManger::deleteFile(int row) {
     endRemoveRows();
     emit rowCountChanged();
 }
+
+void DownloadManger::search(const QString &str) {
+    beginResetModel();
+    m_sqlTable.setFilter(QString("fileName LIKE '%%%1%%'").arg(str));
+    m_sqlTable.filter();
+    m_sqlTable.select();
+    endResetModel();
+}
