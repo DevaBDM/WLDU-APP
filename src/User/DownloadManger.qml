@@ -34,6 +34,14 @@ Pane {
                             parent.download.startDownload();
                         }
                         onPressAndHold: fileCacheMenu.open()
+                        MenuSeparator{
+                            anchors{
+                                left:parent.left
+                                leftMargin: 20
+                                right: parent.right
+                                bottom:parent.bottom
+                            }
+                        }
                     }
                     ToolButton {
                         icon.source: "qrc:/qt/qml/WLDU/assets/icons/trash.svg"

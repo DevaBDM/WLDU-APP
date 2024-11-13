@@ -63,9 +63,10 @@ Page {
                             anchors.fill: parent
                             Repeater {
                                 model: User.profileInfo
-                                delegate: ToolButton {
+                                delegate: ItemDelegate {
                                     text: modelData
                                     leftPadding: 10
+                                    Layout.fillWidth: true
                                     MenuSeparator {
                                         anchors {
                                             left: parent.left
