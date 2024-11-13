@@ -91,6 +91,14 @@ ApplicationWindow {
         }
     }
 
+    onClosing: close => {
+        if (stackViewHome.depth > 1) {
+            close.accepted = false;
+            stackViewHome.pop();
+        } else
+            return;
+    }
+
     Component {
         id: welcome
         Welcome {
