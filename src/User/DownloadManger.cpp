@@ -8,7 +8,7 @@ DownloadManger::DownloadManger(QString subHost, QAbstractListModel *parent)
     : QAbstractListModel{parent},
       m_db{QSqlDatabase::addDatabase("QSQLITE", "DownloadCache")},
       m_sqlTable(this, m_db), m_savePath{QStandardPaths::writableLocation(
-                                             QStandardPaths::CacheLocation) +
+                                             QStandardPaths::DownloadLocation) +
                                          "/DownloadCache"},
       m_downloaders(), m_subHost{subHost}, m_host{Constant::k_hostname} {
     QDir{}.mkpath(m_savePath);
