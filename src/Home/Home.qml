@@ -31,6 +31,9 @@ Page {
     SwipeView {
         id: swipeView
         anchors.fill: parent
+        HomeTab {
+            id: home
+        }
         Pane {
             News {
                 id: news
@@ -128,6 +131,10 @@ Page {
             anchors.centerIn: parent
             Repeater {
                 model: ListModel {
+                    ListElement {
+                        name: "Home"
+                        iconSource: "qrc:/qt/qml/WLDU/assets/icons/home.svg"
+                    }
                     ListElement {
                         name: "News"
                         iconSource: "qrc:/qt/qml/WLDU/assets/icons/news.svg"

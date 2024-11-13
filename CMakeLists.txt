@@ -52,6 +52,7 @@ qt_add_qml_module(
   src/EditProfile.qml
   src/Welcome.qml
   src/Home/Home.qml
+  src/Home/HomeTab.qml
   src/Schedule/Schedule.qml
   src/Register/Register.qml
   src/Register/AccountRegister.qml
@@ -78,6 +79,7 @@ qt_add_qml_module(
   assets/icons/news.svg
   assets/icons/download.svg
   assets/icons/trash.svg
+  assets/icons/home.svg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp
