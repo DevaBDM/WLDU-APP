@@ -368,7 +368,8 @@ ListView {
                     Label {
                         Layout.fillWidth: true
                         elide: Label.ElideRight
-                        text: description
+                        text: description + (description != "" ? "..." : "")
+                        maximumLineCount: 1
                     }
                 }
             }
