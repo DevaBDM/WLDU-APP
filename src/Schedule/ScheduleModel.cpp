@@ -1,5 +1,6 @@
 #include "Schedule/ScheduleModel.h"
 #include <QFile>
+#include <QSqlRecord>
 
 Schedule_Model::Schedule_Model(QAbstractListModel *parent)
     : QAbstractListModel{parent},
@@ -9,13 +10,16 @@ Schedule_Model::Schedule_Model(QAbstractListModel *parent)
           "(beginDate <= '%1' OR beginDate IS NULL) AND (expireDate > '%1' "
           "OR expireDate IS NULL) AND weekday = strftime('%w','%1') OR "
           "onceDate = '%1'"},
-      m_mainCache(nullptr), m_filesModel{m_db, m_path, this} {
+      m_mainCache(nullptr), m_filesModel{m_db, m_path, this},
+      m_slipModel(m_db) {
     connectCurrentRow();
     connect(this, &Schedule_Model::dateChanged, this,
             &Schedule_Model::setFilter);
     connect(this, &Schedule_Model::currentRowChanged, [&]() {
         m_filesModel.setFilter(slipID().toInt(), scheduleID().toInt());
     });
+    connect(&m_slipModel, &SlipModel::currentRowChanged,
+            [&](int row) { m_filesModel.setFilter(row + 1, 0); });
 }
 
 Schedule_Model::Schedule_Model(QString p, QAbstractListModel *parent)
@@ -179,6 +183,7 @@ bool Schedule_Model::prepareModelDB() {
     m_db.setDatabaseName(m_path + ".db");
     m_db.open();
     m_filesModel.prepareModelDB();
+    m_slipModel.prepareModelDB();
     m_sqlTable.setTable("ScheduleModel");
     return setFilter();
 }
@@ -233,3 +238,5 @@ void Schedule_Model::setCache(CacheManager *cache) {
 }
 
 Files_Model *Schedule_Model::FilesModel() { return &m_filesModel; }
+
+SlipModel *Schedule_Model::slip() { return &m_slipModel; }

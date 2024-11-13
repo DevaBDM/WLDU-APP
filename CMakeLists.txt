@@ -35,6 +35,8 @@ qt_add_executable(
   include/News/news.h
   src/News/news.cpp
   include/constant.h
+  include/Schedule/SlipModel.h
+  src/Schedule/SlipModel.cpp
   #
 )
 

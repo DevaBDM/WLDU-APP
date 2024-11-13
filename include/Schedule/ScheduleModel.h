@@ -3,11 +3,11 @@
 
 #include "CacheManager/CacheManager.h"
 #include "Schedule/FilesModel.h"
+#include "Schedule/SlipModel.h"
 #include <QAbstractListModel>
 #include <QDate>
 #include <QObject>
 #include <QSqlDatabase>
-#include <QSqlRecord>
 #include <QSqlTableModel>
 
 class Schedule_Model : public QAbstractListModel {
@@ -31,6 +31,7 @@ class Schedule_Model : public QAbstractListModel {
     Q_PROPERTY(QVariant weekDay READ weekDay NOTIFY dateChanged)
     Q_PROPERTY(CacheManager *Cache READ Cache NOTIFY CacheChanged)
     Q_PROPERTY(Files_Model *FilesModel READ FilesModel NOTIFY FilesModelChanged)
+    Q_PROPERTY(SlipModel *Slip READ slip NOTIFY slipModelChanged)
   public:
     explicit Schedule_Model(QAbstractListModel *parent = nullptr);
     explicit Schedule_Model(QString p, QAbstractListModel *parent = nullptr);
@@ -78,6 +79,7 @@ class Schedule_Model : public QAbstractListModel {
     QVariant weekDay() const;
     CacheManager *Cache() const;
     Files_Model *FilesModel();
+    SlipModel *slip();
 
   private:
     bool prepareModelDB();
@@ -93,6 +95,7 @@ class Schedule_Model : public QAbstractListModel {
     int epoch() const;
 
   signals:
+    void slipModelChanged();
     void FilesModelChanged();
     void CacheChanged();
     void currentRowChanged(int);
@@ -122,6 +125,7 @@ class Schedule_Model : public QAbstractListModel {
     QString m_path;
     CacheManager *m_mainCache;
     Files_Model m_filesModel;
+    SlipModel m_slipModel;
 };
 
 #endif // INCLUDE_SRC_SCHEDULEMODEL_H_
