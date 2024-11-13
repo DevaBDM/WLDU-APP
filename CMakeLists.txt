@@ -37,6 +37,8 @@ qt_add_executable(
   include/constant.h
   include/Schedule/SlipModel.h
   src/Schedule/SlipModel.cpp
+  include/Update/AppUpdate.h
+  src/Update/AppUpdate.cpp
   #
 )
 

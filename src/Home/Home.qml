@@ -3,6 +3,7 @@ import QtCore
 import QtQuick.Controls
 import QtQuick.Layouts
 import com.user.db
+import com.AppUpdate
 import "../Schedule"
 import ".."
 import "../News"
@@ -22,6 +23,7 @@ Page {
         User.News.Cache.reFetch(uri);
         User.Schedule.Cache.reFetch(uri);
         User.Schedule.FilesModel.setHost(uri);
+        AppUpdate.fetch(uri);
     }
     Settings {
         property alias currentIndex: swipeView.currentIndex
@@ -90,6 +92,22 @@ Page {
                         width: !!ListView.view ? ListView.view.width : width
                         ColumnLayout {
                             anchors.fill: parent
+                            ToolButton {
+                                Layout.fillWidth: true
+                                contentItem: RowLayout {
+                                    Label {
+                                        Layout.fillWidth: true
+                                        text: "Check for Update!!"
+                                        verticalAlignment: Qt.AlignVCenter
+                                        elide: Label.ElideRight
+                                    }
+                                    Label {
+                                        text: "Version " + AppUpdate.version
+                                        Layout.alignment: Qt.AlignRight
+                                    }
+                                }
+                                onClicked: AppUpdate.fetch()
+                            }
                             RowLayout {
                                 Layout.fillWidth: true
                                 ToolButton {

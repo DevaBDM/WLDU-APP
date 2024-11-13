@@ -1,3 +1,4 @@
+#include "Update/AppUpdate.h"
 #include "User/User.h"
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
@@ -12,9 +13,11 @@ int main(int argc, char *argv[]) {
     QGuiApplication::setApplicationVersion("0.0.1");
     QGuiApplication::setOrganizationDomain("org");
 
+    AppUpdate update;
     User user;
 
     qmlRegisterSingletonInstance("com.user.db", 1, 0, "User", &user);
+    qmlRegisterSingletonInstance("com.AppUpdate", 1, 0, "AppUpdate", &update);
 
     QQmlApplicationEngine engine;
     QObject::connect(
