@@ -15,9 +15,9 @@
 class User : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool registered READ registered NOTIFY registeredChanged)
-    Q_PROPERTY(QString userName READ userName NOTIFY userNameChanged)
+    Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
     Q_PROPERTY(QUrl pp_location READ pp_location NOTIFY pp_locationChanged)
-    Q_PROPERTY(QString bio READ bio NOTIFY bioChanged)
+    Q_PROPERTY(QString bio READ bio WRITE setBio NOTIFY bioChanged)
     // Q_PROPERTY(int level READ level NOTIFY levelChanged)
 
     Q_PROPERTY(qint32 studentID READ studentID NOTIFY studentIDChanged)
@@ -52,6 +52,9 @@ class User : public QObject {
     void setCache(CacheManager *);
     void setRegisterCache(CacheManager *);
     void setUserCache(CacheManager *);
+
+    void setUserName(const QString &);
+    void setBio(const QString &);
 
     bool registered() const;
     QString userName() const;

@@ -221,3 +221,27 @@ void User::setUserCache(CacheManager *cache) {
 }
 
 NewsModel *User::News() { return &m_news; }
+
+void User::setUserName(const QString &newUserName) {
+    if (newUserName == userName())
+        return;
+    if (!m_sqlTableAccount.setData(
+            m_sqlTableAccount.index(0,
+                                    m_sqlTableAccount.fieldIndex("user_name")),
+            newUserName))
+        return;
+    m_sqlTableAccount.submit();
+    emit userNameChanged();
+}
+
+void User::setBio(const QString &newBio) {
+    if (newBio == bio())
+        return;
+    if (!m_sqlTableAccount.setData(
+            m_sqlTableAccount.index(0, m_sqlTableAccount.fieldIndex("Bio")),
+            newBio))
+        return;
+    m_sqlTableAccount.submit();
+    emit bioChanged();
+    emit profileInfoChanged();
+}

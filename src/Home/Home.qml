@@ -8,10 +8,11 @@ import "../Schedule"
 import ".."
 import "../News"
 import "../Grade"
+import "../Register"
 
 Page {
     id: root
-    signal push(Component comp);
+    signal push(Component comp)
     states: [
         State {
             name: "full"
@@ -142,6 +143,7 @@ Page {
                         top: parent.top
                     }
                     z: -1
+                    onClicked: root.push(profilePictureEdit)
                 }
             }
         }
@@ -187,6 +189,50 @@ Page {
         id: gradeUI
         Grade {
             id: gradeCalculate
+        }
+    }
+    Component {
+        id: profilePictureEdit
+        ColumnLayout {
+            SwipeView {
+                id: editSwipe
+                currentIndex: indicator.currentIndex
+                Layout.fillWidth: true
+                Layout.fillHeight: true
+                ProfilePictureRegister {
+                    id: profilePicture
+                    imageSource: profile.source
+                }
+                AccountRegister {
+                    id: accountEdit
+                    userName: User.userName
+                    bio: User.bio
+                    Button {
+                        anchors{
+                            right: parent.right
+                            bottom :parent.bottom
+                        }
+                        text: "Save"
+                        onClicked: {
+                            User.userName = accountEdit.userName;
+                            User.bio = accountEdit.bio;
+                        }
+                    }
+                }
+            }
+            PageIndicator {
+                id: indicator
+                // Layout.fillWidth: true
+                Layout.alignment: Qt.AlignHCenter
+                currentIndex: editSwipe.currentIndex
+                count: editSwipe.count
+                interactive: true
+            }
+            StackView.onRemoved: {
+                var s = profile.source;
+                profile.source = "";
+                profile.source = s;
+            }
         }
     }
 }
