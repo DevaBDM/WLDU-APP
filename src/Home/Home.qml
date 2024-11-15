@@ -22,6 +22,9 @@ Page {
             }
         }
     ]
+    About {
+        id: messageDialog
+    }
     function resetURI(uri) {
         User.News.Cache.reFetch(uri);
         User.Schedule.Cache.reFetch(uri);
@@ -130,6 +133,11 @@ Page {
                                     onAccepted: root.resetURI(text)
                                 }
                             }
+                            ItemDelegate {
+                                text: "About WLDU"
+                                Layout.fillWidth: true
+                                onClicked: messageDialog.open()
+                            }
                         }
                     }
                 }
@@ -208,9 +216,9 @@ Page {
                     userName: User.userName
                     bio: User.bio
                     Button {
-                        anchors{
+                        anchors {
                             right: parent.right
-                            bottom :parent.bottom
+                            bottom: parent.bottom
                         }
                         text: "Save"
                         onClicked: {
