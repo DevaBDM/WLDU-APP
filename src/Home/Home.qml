@@ -7,9 +7,11 @@ import com.AppUpdate
 import "../Schedule"
 import ".."
 import "../News"
+import "../Grade"
 
 Page {
     id: root
+    signal push(Component comp);
     states: [
         State {
             name: "full"
@@ -35,6 +37,7 @@ Page {
         anchors.fill: parent
         HomeTab {
             id: home
+            onCalculateGrade: root.push(gradeUI)
         }
         Pane {
             News {
@@ -178,6 +181,12 @@ Page {
                     opacity: index == swipeView.currentIndex ? 1 : 0.7
                 }
             }
+        }
+    }
+    Component {
+        id: gradeUI
+        Grade {
+            id: gradeCalculate
         }
     }
 }

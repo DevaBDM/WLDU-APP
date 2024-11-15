@@ -2,7 +2,8 @@
 #include <QSqlRecord>
 
 SlipModel::SlipModel(QSqlDatabase &db, QAbstractListModel *parent)
-    : m_db{db}, m_sqlTable(this, m_db) {
+    : m_db{db}, m_sqlTable(this, m_db), m_sqlTableGrade(this, m_db),
+      m_gradeResult(4000), m_gradeChooseRow{} {
     connectCurrentRow();
     prepareModelDB();
 }
@@ -23,6 +24,7 @@ QHash<int, QByteArray> SlipModel::roleNames() const {
     roleNames[lab_practiceHRole] = "lab_practiceHR";
     roleNames[home_studyHRole] = "home_studyHR";
     roleNames[descriptionRole] = "description";
+    roleNames[gradeLetterRole] = "gradeIndex";
 
     return roleNames;
 }
@@ -50,6 +52,8 @@ QVariant SlipModel::data(const QModelIndex &index, int role) const {
         return m_sqlTable.record(row).value("home_studyHR");
     case descriptionRole:
         return m_sqlTable.record(row).value("description");
+    case gradeLetterRole:
+        return m_gradeChooseRow.at(row);
     }
     return {};
 }
@@ -58,6 +62,8 @@ void SlipModel::prepareModelDB() {
     beginResetModel();
     m_sqlTable.setTable("Slip");
     m_sqlTable.select();
+    m_gradeChooseRow.resize(rowCount());
+    fill("GradeModel", m_LetterGrade_list);
     endResetModel();
 }
 
@@ -100,4 +106,38 @@ void SlipModel::connectCurrentRow() {
     //         &SlipModel::teacherPPChanged);
     connect(this, &SlipModel::currentRowChanged, this,
             &SlipModel::descriptionChanged);
+}
+
+QStringList SlipModel::letterGrade() const { return m_LetterGrade_list; }
+int SlipModel::gradeResult() const { return m_gradeResult; }
+void SlipModel::setGradeResult(int gradeResult) {
+    if (m_gradeResult == gradeResult)
+        return;
+    m_gradeResult = gradeResult;
+    emit gradeResultChanged(gradeResult);
+}
+
+void SlipModel::setGrade(int row, int gradeRow) {
+    m_gradeChooseRow[row] = gradeRow;
+    double resultNom{0};
+    double ectsSum{0};
+    for (int index{0}; index < rowCount(); index++) {
+        ectsSum += m_sqlTable.record(index).value("ECTs").toInt();
+        resultNom += m_sqlTable.record(index).value("ECTs").toInt() *
+                     m_sqlTableGrade.record(m_gradeChooseRow[index])
+                         .value("fixedNumber")
+                         .toDouble();
+    }
+    setGradeResult(resultNom / ectsSum * 1000);
+    return;
+}
+
+void SlipModel::fill(QString tableName, QStringList &member) {
+    m_sqlTableGrade.setTable(tableName);
+    m_sqlTableGrade.select();
+    member.clear();
+    for (int i{0}; i < m_sqlTableGrade.rowCount(); ++i) {
+        member.append(m_sqlTableGrade.record(i).value("letter").toString());
+    }
+    emit letterGradeChanged();
 }

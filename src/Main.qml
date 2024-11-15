@@ -138,7 +138,11 @@ ApplicationWindow {
 
     Component {
         id: swipeViewHome
-        Home {}
+        Home {
+            onPush: comp => {
+                stackViewHome.push(comp);
+            }
+        }
     }
 
     Component {

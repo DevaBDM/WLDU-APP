@@ -5,6 +5,7 @@
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlTableModel>
+#include <QStringList>
 
 class SlipModel : public QAbstractListModel {
     Q_OBJECT
@@ -12,6 +13,8 @@ class SlipModel : public QAbstractListModel {
     Q_PROPERTY(QVariant title READ title NOTIFY titleChanged)
     Q_PROPERTY(QVariant shortNote READ shortNote NOTIFY shortNoteChanged)
     Q_PROPERTY(QVariant description READ description NOTIFY descriptionChanged)
+    Q_PROPERTY(QStringList LetterGrade READ letterGrade NOTIFY letterGradeChanged)
+    Q_PROPERTY(int GradeResult READ gradeResult NOTIFY gradeResultChanged)
   public:
     explicit SlipModel(QSqlDatabase &db, QAbstractListModel *parent = nullptr);
     enum Role {
@@ -23,7 +26,8 @@ class SlipModel : public QAbstractListModel {
         tutorHRole,
         lab_practiceHRole,
         home_studyHRole,
-        descriptionRole
+        descriptionRole,
+        gradeLetterRole
     };
 
     int rowCount(const QModelIndex &parent = QModelIndex{}) const override;
@@ -35,7 +39,9 @@ class SlipModel : public QAbstractListModel {
     // properties
     void prepareModelDB();
     int currentRow() const;
+    int gradeResult() const;
     void setCurrentRow(int row);
+    void setGradeResult(int);
 
     QVariant title() const;
     QVariant shortNote() const;
@@ -43,10 +49,16 @@ class SlipModel : public QAbstractListModel {
 
   private:
     void connectCurrentRow();
+    void fill(QString, QStringList &);
+    QStringList letterGrade() const;
+
   public slots:
+    void setGrade(int, int);
 
   signals:
     void currentRowChanged(int);
+    void gradeResultChanged(int);
+    void letterGradeChanged();
 
     void titleChanged();
     void shortNoteChanged();
@@ -55,7 +67,11 @@ class SlipModel : public QAbstractListModel {
   private:
     QSqlDatabase &m_db;
     QSqlTableModel m_sqlTable;
+    QSqlTableModel m_sqlTableGrade;
     int m_currentRow;
+    QStringList m_LetterGrade_list;
+    int m_gradeResult;
+    QList<int> m_gradeChooseRow;
 };
 
 #endif // INCLUDE_SCHEDULE_SLIPMODEL_H_

@@ -63,6 +63,7 @@ qt_add_qml_module(
   src/Register/CutProfilePic.qml
   src/News/News.qml
   src/User/DownloadManger.qml
+  src/Grade/Grade.qml
   RESOURCES
   assets/icons/back.svg
   assets/icons/edit-profile.svg

@@ -4,6 +4,8 @@ import QtQuick.Controls
 import com.user.db
 
 Pane {
+    id: root
+    signal calculateGrade
     ColumnLayout {
         anchors.fill: parent
         Item {
@@ -27,8 +29,8 @@ Pane {
             model: User.Schedule.Slip
             orientation: Qt.Horizontal
             spacing: 10
-            Layout.maximumHeight: !!currentItem ?  currentItem.height : 0
-            Layout.minimumHeight:  !!currentItem ?  currentItem.height : 0
+            Layout.maximumHeight: !!currentItem ? currentItem.height : 0
+            Layout.minimumHeight: !!currentItem ? currentItem.height : 0
             delegate: Button {
                 onClicked: {
                     User.Schedule.Slip.currentRow = index;
@@ -79,6 +81,11 @@ Pane {
                     }
                 }
             }
+        }
+        ItemDelegate {
+            Layout.fillWidth: true
+            text: "Calculate Grade"
+            onClicked: root.calculateGrade()
         }
         Item {
             Layout.fillWidth: true
