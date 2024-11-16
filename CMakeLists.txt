@@ -56,6 +56,7 @@ qt_add_qml_module(
   src/Home/Home.qml
   src/Home/HomeTab.qml
   src/Home/About.qml
+  src/Home/UserSettings.qml
   src/Schedule/Schedule.qml
   src/Register/Register.qml
   src/Register/AccountRegister.qml

@@ -13,6 +13,7 @@ import "../Register"
 Page {
     id: root
     signal push(Component comp)
+    signal about
     states: [
         State {
             name: "full"
@@ -22,12 +23,8 @@ Page {
             }
         }
     ]
-    About {
-        id: messageDialog
-    }
     Settings {
         property alias currentIndex: swipeView.currentIndex
-        property alias uri: uriTF.text
     }
     state: !!swipeView.currentItem && swipeView.currentItem.full ? "full" : ""
     SwipeView {
@@ -91,58 +88,15 @@ Page {
                     }
                     Pane {
                         width: !!ListView.view ? ListView.view.width : width
-                        ColumnLayout {
+                        UserSettings {
+                            id: userSettings
                             anchors.fill: parent
-                            ToolButton {
-                                Layout.fillWidth: true
-                                contentItem: RowLayout {
-                                    Label {
-                                        Layout.fillWidth: true
-                                        text: "Check for Update!!"
-                                        verticalAlignment: Qt.AlignVCenter
-                                        elide: Label.ElideRight
-                                    }
-                                    Label {
-                                        text: "Version " + AppUpdate.version
-                                        Layout.alignment: Qt.AlignRight
-                                    }
-                                }
-                                onClicked: AppUpdate.fetch()
-                            }
-                            RowLayout {
-                                Layout.fillWidth: true
-                                ToolButton {
-                                    text: "Local server"
-                                    onClicked: {
-                                        if (uriTF.text === "") {
-                                            User.setHost("http://10.42.0.1/WLDU");
-                                            AppUpdate.fetch("http://10.42.0.1/WLDU");
-                                        } else {
-                                            User.setHost(uriTF.text);
-                                            AppUpdate.fetch(uriTF.text);
-                                        }
-                                    }
-                                }
-                                TextField {
-                                    id: uriTF
-                                    Layout.fillWidth: true
-                                    onAccepted: {
-                                        if (uriTF.text === "") {
-                                            User.setHost("http://10.42.0.1/WLDU");
-                                            AppUpdate.fetch("http://10.42.0.1/WLDU");
-                                        } else {
-                                            User.setHost(uriTF.text);
-                                            AppUpdate.fetch(uriTF.text);
-                                        }
-                                    }
-                                }
-                            }
-                            ItemDelegate {
-                                text: "About WLDU"
-                                Layout.fillWidth: true
-                                onClicked: messageDialog.open()
-                            }
                         }
+                    }
+                    ItemDelegate {
+                        text: "About WLDU"
+                        Layout.fillWidth: true
+                        onClicked: root.about()
                     }
                 }
 

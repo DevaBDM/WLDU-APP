@@ -99,6 +99,10 @@ ApplicationWindow {
             return;
     }
 
+    About {
+        id: messageDialog
+    }
+
     Component {
         id: welcome
         Welcome {
@@ -121,6 +125,7 @@ ApplicationWindow {
                 } else if (!!User.RegisterCache)
                     User.RegisterCache.reFetch();
             }
+            onSettingsClicked: stackViewHome.push("Home/UserSettings.qml")
         }
     }
 
@@ -130,6 +135,7 @@ ApplicationWindow {
             id: register
             property bool full: true
             onDone: {
+                messageDialog.open();
                 stackViewHome.clear();
                 stackViewHome.push(swipeViewHome);
             }
@@ -142,6 +148,7 @@ ApplicationWindow {
             onPush: comp => {
                 stackViewHome.push(comp);
             }
+            onAbout: messageDialog.open()
         }
     }
 

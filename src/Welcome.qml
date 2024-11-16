@@ -5,20 +5,17 @@ import "Home"
 
 Item {
     signal registerClicked
+    signal settingsClicked
     property alias notice: info.text
     property alias enabled: regButton.enabled
     property alias info: regButton.text
 
-    About {
-        id: messageDialog
-    }
-
     ColumnLayout {
         anchors.fill: parent
         ToolButton {
-            text: "About"
+            text: "Settings"
             Layout.alignment: Qt.AlignRight
-            onClicked: messageDialog.open()
+            onClicked: settingsClicked()
         }
 
         Label {
@@ -51,7 +48,6 @@ Item {
             text: "Register"
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
             onClicked: {
-                messageDialog.open();
                 registerClicked();
             }
         }
