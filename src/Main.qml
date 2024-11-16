@@ -4,6 +4,7 @@ import QtQuick.Layouts
 import QtQuick.Controls
 import WLDU
 import com.user.db
+import com.AppUpdate
 import "Schedule"
 import "Register"
 import "Home"
@@ -78,6 +79,19 @@ ApplicationWindow {
                     stackViewHome.push(downloadManger);
                 }
             }
+        }
+    }
+    footer: Button {
+        id: upgradeTheApp
+        visible: !AppUpdate.uptodate
+        enabled: !AppUpdate.downloading && !AppUpdate.uptodate
+        Layout.fillWidth: true
+        text: AppUpdate.downloaded ? "Click to install new version" : AppUpdate.downloading ? AppUpdate.progress + "%" : "New version available!! Click to Download"
+        onClicked: {
+            if (AppUpdate.downloading)
+                print("Downloading");
+            else
+                AppUpdate.update();
         }
     }
 

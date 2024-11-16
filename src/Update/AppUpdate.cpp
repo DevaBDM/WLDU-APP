@@ -18,7 +18,7 @@ const QString k_arch{""};
 
 AppUpdate::AppUpdate(QObject *parent)
     : QObject{parent}, m_uptodate{true}, m_downloading{false}, m_progress{0},
-      m_downloaded{false}, m_version{"v0.4.5"},
+      m_downloaded{false}, m_version{"v0.6"},
       m_host(Constant::k_hostname + "/App"),
       m_savePath{
           QStandardPaths::writableLocation(QStandardPaths::CacheLocation) +

@@ -1,4 +1,5 @@
 import QtCore
+import QtQuick
 import QtQuick.Controls
 import QtQuick.Layouts
 import com.user.db
@@ -46,5 +47,9 @@ ColumnLayout {
             Layout.fillWidth: true
             onAccepted: root.resetURI(text)
         }
+    }
+    Item {
+        Layout.fillHeight: true
+        Layout.fillWidth: true
     }
 }

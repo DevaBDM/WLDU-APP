@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
-import com.AppUpdate
 
 Item {
     id: root
@@ -94,19 +93,6 @@ Item {
                 id: header
                 width: parent.width
                 height: user.height * 2
-            }
-        }
-        Button {
-            id: upgradeTheApp
-            visible: !AppUpdate.uptodate
-            enabled: !AppUpdate.downloading && !AppUpdate.uptodate
-            Layout.fillWidth: true
-            text: AppUpdate.downloaded ? "Click to install now" : AppUpdate.downloading ? AppUpdate.progress + "%" : "Download"
-            onClicked: {
-                if (AppUpdate.downloading)
-                    print("Downloading");
-                else
-                    AppUpdate.update();
             }
         }
     }
