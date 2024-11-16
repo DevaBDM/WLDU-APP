@@ -13,7 +13,7 @@ Pane {
             model: User.Schedule.Slip
             header: Label {
                 width: ListView.view.width
-                text: "Grade = " + User.Schedule.Slip.GradeResult / 1000
+                text: "Result = " + User.Schedule.Slip.GradeResult / 1000
                 font {
                     pixelSize: 25
                     bold: true

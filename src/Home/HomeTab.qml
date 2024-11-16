@@ -7,11 +7,12 @@ Pane {
     id: root
     signal calculateGrade
     ColumnLayout {
-        anchors.fill: parent
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+        anchors {
+            left: parent.left
+            right: parent.right
+            verticalCenter: parent.verticalCenter
         }
+        spacing: 8
         Label {
             Layout.fillWidth: true
             Layout.alignment: Qt.AlignBottom
@@ -25,12 +26,12 @@ Pane {
 
         ListView {
             Layout.fillWidth: true
-            Layout.fillHeight: true
             model: User.Schedule.Slip
             orientation: Qt.Horizontal
+            Layout.alignment: Qt.AlignVCenter
             spacing: 10
-            Layout.maximumHeight: !!currentItem ? currentItem.height : 0
-            Layout.minimumHeight: !!currentItem ? currentItem.height : 0
+            Layout.preferredHeight: !!currentItem ? currentItem.height : 0
+            currentIndex: 1
             delegate: Button {
                 onClicked: {
                     User.Schedule.Slip.currentRow = index;
@@ -86,10 +87,7 @@ Pane {
             Layout.fillWidth: true
             text: "Calculate Grade"
             onClicked: root.calculateGrade()
-        }
-        Item {
-            Layout.fillWidth: true
-            Layout.fillHeight: true
+            Layout.alignment: Qt.AlignTop
         }
     }
     Drawer {
