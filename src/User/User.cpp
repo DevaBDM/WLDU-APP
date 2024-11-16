@@ -2,26 +2,29 @@
 #include "CacheManager/CacheManager.h"
 #include "Register/Register.h"
 #include "Schedule/ScheduleModel.h"
+#include "constant.h"
 #include <QDateTime>
-#include <QDir>
 
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
       m_sqlTableAccount{parent, m_db}, m_sqlTableStudent{parent, m_db},
       m_register(nullptr), m_schedule{}, m_mainCache{nullptr},
-      m_registerCache(nullptr), m_userCache{nullptr}, m_news(this) {
-    QDir{}.mkpath("Register");
+      m_registerCache(nullptr), m_userCache{nullptr},
+      m_news("News/news", m_host, m_userCachePath, this),
+      m_host{Constant::k_hostname}, m_userCachePath(".") {
 
     if (!prepareUserDB() || !registered()) {
-        setUserCache(new CacheManager{"/Register/user", this});
-        setRegisterCache(new CacheManager{"/Register/register", this});
+        setUserCache(
+            new CacheManager{"Register/user", m_host, m_userCachePath, this});
+        setRegisterCache(new CacheManager{"Register/register", m_host,
+                                          m_userCachePath, this});
 
-        connect(userCache(), &CacheManager::done, [&](CacheManager *cache) {
+        connect(userCache(), &CacheManager::uptodate, [&](CacheManager *cache) {
             prepareUserDB();
             setUserCache(nullptr);
         });
 
-        connect(registerCache(), &CacheManager::done, [&](CacheManager *) {
+        connect(registerCache(), &CacheManager::uptodate, [&](CacheManager *) {
             m_register = new Register{this};
             connect(this, &User::registeredSuccessfully, m_register,
                     &Register::deleteLater);
@@ -38,7 +41,7 @@ User::User(QObject *parent)
 bool User::prepareUserDB() {
     if (m_db.isOpen())
         m_db.close();
-    m_db.setDatabaseName("Register/user.db");
+    m_db.setDatabaseName(m_userCachePath + "/Register/user.db");
     m_db.open();
     m_sqlTableAccount.setTable("Account");
     m_sqlTableStudent.setTable("Student");
@@ -47,8 +50,7 @@ bool User::prepareUserDB() {
 }
 
 void User::prepareScheduleDB() {
-    QDir{}.mkpath(location());
-    m_schedule.setPath(location());
+    m_schedule.setNewCache(subHost(), m_host, m_userCachePath);
     emit scheduleChanged();
 }
 
@@ -173,7 +175,7 @@ QStringList User::profileInfo() {
     return model;
 }
 
-QString User::location() const {
+QString User::subHost() const {
     return "Material/" + program() + "/" + addmission() + "/" + "D" +
            QString::number(departmentID()) + "S" + QString::number(streamID()) +
            "Y" + QString::number(year()) + "S" + QString::number(semester()) +
@@ -244,4 +246,19 @@ void User::setBio(const QString &newBio) {
     m_sqlTableAccount.submit();
     emit bioChanged();
     emit profileInfoChanged();
+}
+
+void User::setHost(const QString &newHost) {
+    if (m_host == newHost)
+        return;
+    m_host = newHost;
+    if (registerCache())
+        registerCache()->setHost(newHost);
+    if (userCache())
+        userCache()->setHost(newHost);
+    if (Schedule() && Schedule()->Cache()) {
+        Schedule()->Cache()->setHost(newHost);
+        Schedule()->FilesModel()->setHost(newHost + "/" + subHost());
+    }
+    m_news.Cache()->setHost(newHost);
 }

@@ -58,7 +58,6 @@ class Files_Model : public QAbstractListModel {
     QSqlTableModel m_sqlTable;
     QString m_filter;
     DownloadManger *m_downloadManager;
-    QString m_path;
 };
 
 #endif // INCLUDE_SCHEDULE_FILESMODEL_H_

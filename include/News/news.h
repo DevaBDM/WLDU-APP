@@ -12,7 +12,8 @@ class NewsModel : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(CacheManager *Cache READ Cache NOTIFY CacheChanged)
   public:
-    explicit NewsModel(QObject *parent = nullptr);
+    explicit NewsModel(const QString &subHost, const QString &host,
+                       const QString &savePath, QObject *parent = nullptr);
     enum Role {
         titleRole = Qt::UserRole + 1,
         headerRole,
@@ -29,14 +30,12 @@ class NewsModel : public QAbstractListModel {
     // properties
     void setCache(CacheManager *);
 
-    CacheManager *Cache() const;
+    CacheManager *Cache();
 
   private:
-    bool prepareModelDB();
-    bool setFilter();
+    void prepareModelDB(const QString &);
 
   public slots:
-    void fetch();
 
   signals:
     void CacheChanged();
@@ -44,8 +43,6 @@ class NewsModel : public QAbstractListModel {
   private:
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTable;
-    QString m_filter;
-    QString m_path;
     CacheManager *m_mainCache;
 };
 

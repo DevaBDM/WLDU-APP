@@ -1,16 +1,15 @@
 #include "News/news.h"
 #include <QDir>
 
-NewsModel::NewsModel(QObject *parent)
+NewsModel::NewsModel(const QString &subHost, const QString &host,
+                     const QString &savePath, QObject *parent)
     : QAbstractListModel{parent},
       m_db{QSqlDatabase::addDatabase("QSQLITE", "News")},
-      m_sqlTable(parent, m_db), m_filter{}, m_mainCache(nullptr),
-      m_path("News/news") {
-    QDir{}.mkpath("./News");
-    prepareModelDB();
-    setCache(new CacheManager{"/" + m_path, this});
-    connect(Cache(), &CacheManager::upgraded,
-            [&](CacheManager *) { prepareModelDB(); });
+      m_sqlTable(parent, m_db), m_mainCache(nullptr) {
+    setCache(new CacheManager{subHost, host, savePath, this});
+    prepareModelDB(savePath + "/" + subHost + ".db");
+    connect(Cache(), &CacheManager::uptodate,
+            [&](CacheManager *cache) { prepareModelDB(cache->cachedPath()); });
     // connect(Cache(), &CacheManager::done, [&](CacheManager *) {
     //     prepareModelDB();
     // });
@@ -48,24 +47,18 @@ QVariant NewsModel::data(const QModelIndex &index, int role) const {
     return {};
 }
 
-bool NewsModel::setFilter() {
-    beginResetModel();
-    // m_sqlTable.setFilter(m_filter.arg(m_date.toString("yyyy-MM-dd")));
-    bool select = m_sqlTable.select();
-    endResetModel();
-    return select;
-}
-
-bool NewsModel::prepareModelDB() {
+void NewsModel::prepareModelDB(const QString &path) {
     if (m_db.isOpen())
         m_db.close();
-    m_db.setDatabaseName(m_path + ".db");
+    m_db.setDatabaseName(path);
     m_db.open();
+    beginResetModel();
     m_sqlTable.setTable("NewsModel");
-    return setFilter();
+    m_sqlTable.select();
+    endResetModel();
 }
 
-CacheManager *NewsModel::Cache() const { return m_mainCache; }
+CacheManager *NewsModel::Cache() { return m_mainCache; }
 
 void NewsModel::setCache(CacheManager *cache) {
     if (!cache && !m_mainCache || cache == m_mainCache)
@@ -77,8 +70,3 @@ void NewsModel::setCache(CacheManager *cache) {
     m_mainCache = cache;
     emit CacheChanged();
 }
-
-void NewsModel::fetch() {
-    if (m_mainCache)
-        m_mainCache->reFetch();
-};

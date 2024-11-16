@@ -22,11 +22,6 @@ Schedule_Model::Schedule_Model(QAbstractListModel *parent)
             [&](int row) { m_filesModel.setFilter(row + 1, 0); });
 }
 
-Schedule_Model::Schedule_Model(QString p, QAbstractListModel *parent)
-    : Schedule_Model(parent) {
-    setPath(p);
-}
-
 int Schedule_Model::rowCount(const QModelIndex &parent) const {
     return m_sqlTable.rowCount();
 }
@@ -215,11 +210,12 @@ void Schedule_Model::connectCurrentRow() {
             &Schedule_Model::seenChanged);
 }
 
-void Schedule_Model::setPath(const QString &p) {
-    m_filesModel.setPath(p);
-    m_path = p + "/schedule";
+void Schedule_Model::setNewCache(const QString &subHost, const QString &host,
+                                 const QString &savePath) {
+    m_filesModel.setPath(host + "/" + subHost);
+    m_path = savePath + "/" + subHost + "/schedule";
     prepareModelDB();
-    setCache(new CacheManager{"/" + m_path, this});
+    setCache(new CacheManager{subHost + "/schedule", host, savePath, this});
     connect(Cache(), &CacheManager::upgraded,
             [&](CacheManager *) { prepareModelDB(); });
 }

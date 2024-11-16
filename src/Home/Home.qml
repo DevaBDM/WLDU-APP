@@ -25,12 +25,6 @@ Page {
     About {
         id: messageDialog
     }
-    function resetURI(uri) {
-        User.News.Cache.reFetch(uri);
-        User.Schedule.Cache.reFetch(uri);
-        User.Schedule.FilesModel.setHost(uri);
-        AppUpdate.fetch(uri);
-    }
     Settings {
         property alias currentIndex: swipeView.currentIndex
         property alias uri: uriTF.text
@@ -121,16 +115,26 @@ Page {
                                     text: "Local server"
                                     onClicked: {
                                         if (uriTF.text === "") {
-                                            root.resetURI("http://10.42.0.1/WLDU");
+                                            User.setHost("http://10.42.0.1/WLDU");
+                                            AppUpdate.fetch("http://10.42.0.1/WLDU");
                                         } else {
-                                            root.resetURI(uriTF.text);
+                                            User.setHost(uriTF.text);
+                                            AppUpdate.fetch(uriTF.text);
                                         }
                                     }
                                 }
                                 TextField {
                                     id: uriTF
                                     Layout.fillWidth: true
-                                    onAccepted: root.resetURI(text)
+                                    onAccepted: {
+                                        if (uriTF.text === "") {
+                                            User.setHost("http://10.42.0.1/WLDU");
+                                            AppUpdate.fetch("http://10.42.0.1/WLDU");
+                                        } else {
+                                            User.setHost(uriTF.text);
+                                            AppUpdate.fetch(uriTF.text);
+                                        }
+                                    }
                                 }
                             }
                             ItemDelegate {

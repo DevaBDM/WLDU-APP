@@ -12,8 +12,7 @@
 
 class Schedule_Model : public QAbstractListModel {
     Q_OBJECT
-    Q_PROPERTY(int currentRow READ currentRow WRITE setCurrentRow NOTIFY
-                   currentRowChanged)
+    Q_PROPERTY(int currentRow READ currentRow WRITE setCurrentRow NOTIFY currentRowChanged)
     Q_PROPERTY(QVariant startTime READ startTime NOTIFY startTimeChanged)
     Q_PROPERTY(QVariant endTime READ endTime NOTIFY endTimeChanged)
     Q_PROPERTY(QVariant title READ title NOTIFY titleChanged)
@@ -34,7 +33,6 @@ class Schedule_Model : public QAbstractListModel {
     Q_PROPERTY(SlipModel *Slip READ slip NOTIFY slipModelChanged)
   public:
     explicit Schedule_Model(QAbstractListModel *parent = nullptr);
-    explicit Schedule_Model(QString p, QAbstractListModel *parent = nullptr);
     enum Role {
         startTimeRole = Qt::UserRole + 1,
         endTimeRole,
@@ -60,7 +58,7 @@ class Schedule_Model : public QAbstractListModel {
     int currentRow() const;
     void setCurrentRow(int row);
     void setEpoch(int);
-    Q_INVOKABLE void setPath(const QString &);
+    void setNewCache(const QString &subHost,const QString&host,const QString&savePath);
     void setCache(CacheManager *);
 
     QVariant startTime() const;

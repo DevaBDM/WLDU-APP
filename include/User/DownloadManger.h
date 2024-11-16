@@ -19,7 +19,8 @@ class DownloadManger : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(int RowCount READ rowCount NOTIFY rowCountChanged)
   public:
-    DownloadManger(QString subHost, QAbstractListModel *parent = nullptr);
+    DownloadManger(const QString &fullHost,
+                   QAbstractListModel *parent = nullptr);
 
     enum Role { fileNameRole = Qt::UserRole + 1, hashRole };
     int rowCount(const QModelIndex &parent = QModelIndex{}) const override;
@@ -33,8 +34,7 @@ class DownloadManger : public QAbstractListModel {
     Q_INVOKABLE void deleteFile(int);
 
     void cacheDownloaded(QString saveName, QString hash);
-    void setSubHost(const QString &);
-    void setHost(const QString &);
+    bool setFullHost(const QString &);
     Q_INVOKABLE void search(const QString &);
 
   private:
@@ -48,8 +48,7 @@ class DownloadManger : public QAbstractListModel {
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTable;
     QString m_savePath;
-    QString m_subHost;
-    QString m_host;
+    QString m_fullHost;
 
     QNetworkAccessManager m_nm;
 

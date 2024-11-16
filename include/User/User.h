@@ -42,9 +42,6 @@ class User : public QObject {
   public:
     explicit User(QObject *parent = nullptr);
 
-    QString location() const;
-    bool prepareUserDB();
-    void prepareScheduleDB();
     Register *registerDB();
     Schedule_Model *Schedule();
 
@@ -52,6 +49,7 @@ class User : public QObject {
     void setCache(CacheManager *);
     void setRegisterCache(CacheManager *);
     void setUserCache(CacheManager *);
+    Q_INVOKABLE void setHost(const QString &);
 
     void setUserName(const QString &);
     void setBio(const QString &);
@@ -89,6 +87,12 @@ class User : public QObject {
                                  int streamIndex);
 
     QStringList profileInfo();
+
+  private:
+    bool prepareUserDB();
+    void prepareScheduleDB();
+    QString subHost() const;
+
   signals:
     void newsChanged();
     void cacheChanged();
@@ -114,6 +118,9 @@ class User : public QObject {
     void streamChanged();
 
   private:
+    QString m_host;
+    QString m_userCachePath;
+
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTableAccount;
     QSqlTableModel m_sqlTableStudent;
