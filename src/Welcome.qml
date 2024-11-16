@@ -1,14 +1,26 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls
+import "Home"
 
 Item {
     signal registerClicked
     property alias notice: info.text
     property alias enabled: regButton.enabled
     property alias info: regButton.text
+
+    About {
+        id: messageDialog
+    }
+
     ColumnLayout {
         anchors.fill: parent
+        ToolButton {
+            text: "About"
+            Layout.alignment: Qt.AlignRight
+            onClicked: messageDialog.open()
+        }
+
         Label {
             Layout.fillWidth: true
             text: "Welcome!!!"
@@ -38,7 +50,10 @@ Item {
             id: regButton
             text: "Register"
             Layout.alignment: Qt.AlignHCenter | Qt.AlignTop
-            onClicked: registerClicked()
+            onClicked: {
+                messageDialog.open();
+                registerClicked();
+            }
         }
     }
 }
