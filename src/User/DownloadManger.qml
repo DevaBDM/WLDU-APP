@@ -46,7 +46,10 @@ Pane {
                     text: fileName
                     onClicked: {
                         if (!!parent.download)
-                            parent.download.startDownload();
+                            if (parent.download.downloaded)
+                                User.openFile(parent.download.fileLocation);
+                            else
+                                parent.download.startDownload();
                     }
                     onPressAndHold: fileCacheMenu.open()
                     MenuSeparator {

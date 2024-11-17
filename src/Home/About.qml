@@ -21,6 +21,8 @@ Dialog {
             \nI'm constantly working to improve your experience and welcome your suggestions or bug reports! "
         wrapMode: Label.Wrap
         textFormat: Label.MarkdownText
-        onLinkActivated: Qt.openUrlExternally(link)
+        onLinkActivated: link => {
+            Qt.openUrlExternally(link);
+        }
     }
 }

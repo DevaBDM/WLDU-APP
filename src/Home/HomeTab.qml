@@ -167,7 +167,10 @@ Pane {
                         text: !!download && download.downloading ? download.progress + "% " + fileName : fileName
                         onClicked: {
                             if (!!download)
-                                download.startDownload();
+                                if (download.downloaded)
+                                    User.openFile(download.fileLocation);
+                                else
+                                    download.startDownload();
                         }
                     }
                 }

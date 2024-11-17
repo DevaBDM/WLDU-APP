@@ -262,3 +262,7 @@ void User::setHost(const QString &newHost) {
     }
     m_news.Cache()->setHost(newHost);
 }
+
+void User::openFile(const QString &file) const {
+    qDebug() << "USER OpenFile" << file;
+}

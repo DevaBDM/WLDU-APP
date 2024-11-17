@@ -51,6 +51,8 @@ class User : public QObject {
     void setUserCache(CacheManager *);
     Q_INVOKABLE void setHost(const QString &);
 
+    Q_INVOKABLE void openFile(const QString &) const;
+
     void setUserName(const QString &);
     void setBio(const QString &);
 
