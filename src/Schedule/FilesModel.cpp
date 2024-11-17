@@ -87,7 +87,10 @@ void Files_Model::setPath(const QString &fullHost) {
         if (m_downloadManager->setFullHost(fullHost))
             emit downloadMangerChanged();
     } else {
-        m_downloadManager = new DownloadManger{fullHost, this};
+        m_downloadManager = new DownloadManger{
+            fullHost,
+            QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
+            this};
         emit downloadMangerChanged();
     }
 }

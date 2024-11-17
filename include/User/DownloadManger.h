@@ -21,6 +21,8 @@ class DownloadManger : public QAbstractListModel {
   public:
     DownloadManger(const QString &fullHost,
                    QAbstractListModel *parent = nullptr);
+    DownloadManger(const QString &fullHost, const QString &savePath,
+                   QAbstractListModel *parent = nullptr);
 
     enum Role { fileNameRole = Qt::UserRole + 1, hashRole };
     int rowCount(const QModelIndex &parent = QModelIndex{}) const override;
@@ -39,6 +41,7 @@ class DownloadManger : public QAbstractListModel {
 
   private:
     void updateDownloadersHost();
+    void prepareModelDB();
 
   signals:
     void currentHashChanged();

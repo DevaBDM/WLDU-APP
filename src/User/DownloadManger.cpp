@@ -1,31 +1,40 @@
 #include "User/DownloadManger.h"
 #include "User/Downloader.h"
-#include "constant.h"
 #include <QDateTime>
 #include <QSqlError>
+#include <QStandardPaths>
 
 DownloadManger::DownloadManger(const QString &fullHost,
                                QAbstractListModel *parent)
+    : DownloadManger{
+          fullHost,
+          QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
+          parent} {}
+
+DownloadManger::DownloadManger(const QString &fullHost, const QString &savePath,
+                               QAbstractListModel *parent)
     : QAbstractListModel{parent},
       m_db{QSqlDatabase::addDatabase("QSQLITE", "DownloadCache")},
-      m_sqlTable(this, m_db), m_savePath{QStandardPaths::writableLocation(
-                                             QStandardPaths::DownloadLocation) +
-                                         "/DownloadCache"},
+      m_sqlTable(this, m_db), m_savePath{savePath + "/DownloadCache"},
       m_downloaders(), m_fullHost{fullHost} {
+    connect(&m_nm, &QNetworkAccessManager::finished,
+            [](QNetworkReply *reply) { reply->deleteLater(); });
+    prepareModelDB();
+}
+
+void DownloadManger::prepareModelDB() {
     QDir{}.mkpath(m_savePath);
     QSqlQuery m_sql_query{m_db};
     m_db.setDatabaseName(m_savePath + "/DownloadCache.db");
     m_db.open();
     m_sql_query.exec(
         "CREATE TABLE IF NOT EXISTS DownloadCache(pk_DownloadCache INTEGER "
-        "PRIMARY KEY AUTOINCREMENT,hash TEXT UNIQUE,fileName TEXT,update_date "
+        "PRIMARY KEY AUTOINCREMENT,hash TEXT UNIQUE,fileName "
+        "TEXT,update_date "
         "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)");
 
     m_sqlTable.setTable("DownloadCache");
     m_sqlTable.select();
-
-    connect(&m_nm, &QNetworkAccessManager::finished,
-            [](QNetworkReply *reply) { reply->deleteLater(); });
 }
 
 int DownloadManger::rowCount(const QModelIndex &parent) const {
