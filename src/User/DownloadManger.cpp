@@ -129,3 +129,15 @@ void DownloadManger::search(const QString &str) {
     m_sqlTable.select();
     endResetModel();
 }
+
+void DownloadManger::clearDownload() {
+    if (m_db.isOpen())
+        m_db.close();
+    for (auto it = m_downloaders.begin(), end = m_downloaders.end(); it != end;
+         ++it) {
+        it.value()->deleteLater();
+    }
+    m_downloaders.clear();
+    QDir{m_savePath}.removeRecursively();
+    prepareModelDB();
+}

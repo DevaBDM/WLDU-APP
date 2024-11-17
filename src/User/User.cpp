@@ -260,9 +260,15 @@ void User::setHost(const QString &newHost) {
         Schedule()->Cache()->setHost(newHost);
         Schedule()->FilesModel()->setHost(newHost + "/" + subHost());
     }
+    m_news.setHost(newHost + "/News");
     m_news.Cache()->setHost(newHost);
 }
 
-void User::openFile(const QString &file) const {
-    qDebug() << "USER OpenFile" << file;
+void User::openFile(const QUrl &url) const {
+    QString path{};
+    if (url.isLocalFile())
+        path = url.toLocalFile();
+    else
+        path = url.toString(QUrl::None);
+    qDebug() << "USER OpenFile" << path;
 }

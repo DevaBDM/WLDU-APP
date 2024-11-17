@@ -2,11 +2,14 @@
 #define INCLUDE_NEWS_NEWS_H_
 
 #include "CacheManager/CacheManager.h"
+#include "User/DownloadManger.h"
+#include "User/Downloader.h"
 #include <QAbstractListModel>
 #include <QObject>
 #include <QSqlDatabase>
 #include <QSqlRecord>
 #include <QSqlTableModel>
+#include <QStringListModel>
 
 class NewsModel : public QAbstractListModel {
     Q_OBJECT
@@ -15,7 +18,8 @@ class NewsModel : public QAbstractListModel {
     explicit NewsModel(const QString &subHost, const QString &host,
                        const QString &savePath, QObject *parent = nullptr);
     enum Role {
-        titleRole = Qt::UserRole + 1,
+        newsIDRole = Qt::UserRole + 1,
+        titleRole,
         headerRole,
         mainRole,
         footerRole,
@@ -29,6 +33,11 @@ class NewsModel : public QAbstractListModel {
 
     // properties
     void setCache(CacheManager *);
+    void setHost(const QString host);
+    Q_INVOKABLE Downloader *downloader(const QString &name,
+                                       const QString &hash);
+    Q_INVOKABLE QStringListModel *hashList(int row);
+    Q_INVOKABLE void clearCache();
 
     CacheManager *Cache();
 
@@ -43,7 +52,11 @@ class NewsModel : public QAbstractListModel {
   private:
     QSqlDatabase m_db;
     QSqlTableModel m_sqlTable;
+    QSqlTableModel m_sqlTableAttachments;
     CacheManager *m_mainCache;
+    QString m_host;
+    DownloadManger *m_downloadManager;
+    QMap<int, QStringListModel *> m_pictureList;
 };
 
 #endif // INCLUDE_NEWS_NEWS_H_

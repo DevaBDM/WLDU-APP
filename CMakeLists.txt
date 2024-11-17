@@ -85,6 +85,7 @@ qt_add_qml_module(
   assets/icons/download.svg
   assets/icons/trash.svg
   assets/icons/home.svg
+  assets/icons/downloadImage.jpg
   SOURCES
   qmltypes/include/CopyFile.h
   qmltypes/src/CopyFile.cpp

@@ -32,7 +32,7 @@ Item {
         Image {
             Layout.fillHeight: true
             Layout.fillWidth: true
-            source: '../assets/images/wldu_logo.png'
+            source: 'qrc:/qt/qml/WLDU/assets/images/wldu_logo.png'
             fillMode: Image.PreserveAspectFit
         }
         Label {
