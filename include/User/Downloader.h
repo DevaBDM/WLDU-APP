@@ -17,6 +17,7 @@ class Downloader : public QObject {
     Q_PROPERTY(bool downloaded READ downloaded WRITE setDownloaded NOTIFY downloadedChanged)
 
     Q_PROPERTY(QString hash READ hash WRITE setHash NOTIFY hashChanged)
+    Q_PROPERTY(QString fileLocation READ fileLocation NOTIFY done)
   public:
     Downloader(QSqlDatabase &db, QNetworkAccessManager &nm, QString hash,
                QString path, QString saveName, QString host,
@@ -33,6 +34,7 @@ class Downloader : public QObject {
 
     QString hash() const;
     QString saveName() const;
+    QString fileLocation() const;
 
     void setWaitting(bool newWaitting);
     void setDownloading(bool newDownloading);

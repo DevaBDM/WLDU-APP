@@ -75,6 +75,7 @@ QString Downloader::fileHash(QFile &file) {
 
 void Downloader::startDownload() {
     if (downloaded()) {
+        emit done();
         qDebug() << "Opening file" << m_saveName;
         return;
     } else if (downloading())
@@ -136,3 +137,5 @@ void Downloader::setHost(const QString &host) {
 }
 
 QString Downloader::saveName() const { return m_saveName; };
+
+QString Downloader::fileLocation() const { return m_path + "/" + m_saveName; };

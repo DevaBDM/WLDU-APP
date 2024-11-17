@@ -13,15 +13,15 @@
 #include <QSqlQuery>
 #include <QSqlRecord>
 #include <QSqlTableModel>
-#include <QStandardPaths>
 
 class DownloadManger : public QAbstractListModel {
     Q_OBJECT
     Q_PROPERTY(int RowCount READ rowCount NOTIFY rowCountChanged)
   public:
-    DownloadManger(const QString &fullHost,
+    DownloadManger(const QString &dbName, const QString &fullHost,
                    QAbstractListModel *parent = nullptr);
-    DownloadManger(const QString &fullHost, const QString &savePath,
+    DownloadManger(const QString &dbName, const QString &fullHost,
+                   const QString &savePath,
                    QAbstractListModel *parent = nullptr);
 
     enum Role { fileNameRole = Qt::UserRole + 1, hashRole };

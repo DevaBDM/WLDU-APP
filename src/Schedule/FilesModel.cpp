@@ -1,5 +1,6 @@
 #include "Schedule/FilesModel.h"
 #include <QSqlRecord>
+#include <QStandardPaths>
 
 Files_Model::Files_Model(QSqlDatabase &db, QString path,
                          QAbstractListModel *parent)
@@ -88,7 +89,7 @@ void Files_Model::setPath(const QString &fullHost) {
             emit downloadMangerChanged();
     } else {
         m_downloadManager = new DownloadManger{
-            fullHost,
+            "CourseAttachments", fullHost,
             QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
             this};
         emit downloadMangerChanged();

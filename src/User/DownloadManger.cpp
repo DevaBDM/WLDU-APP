@@ -4,18 +4,19 @@
 #include <QSqlError>
 #include <QStandardPaths>
 
-DownloadManger::DownloadManger(const QString &fullHost,
+DownloadManger::DownloadManger(const QString &dbName, const QString &fullHost,
                                QAbstractListModel *parent)
     : DownloadManger{
-          fullHost,
+          dbName, fullHost,
           QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
           parent} {}
 
-DownloadManger::DownloadManger(const QString &fullHost, const QString &savePath,
+DownloadManger::DownloadManger(const QString &dbName, const QString &fullHost,
+                               const QString &savePath,
                                QAbstractListModel *parent)
     : QAbstractListModel{parent},
-      m_db{QSqlDatabase::addDatabase("QSQLITE", "DownloadCache")},
-      m_sqlTable(this, m_db), m_savePath{savePath + "/DownloadCache"},
+      m_db{QSqlDatabase::addDatabase("QSQLITE", dbName)},
+      m_sqlTable(this, m_db), m_savePath{savePath + "/" + dbName},
       m_downloaders(), m_fullHost{fullHost} {
     connect(&m_nm, &QNetworkAccessManager::finished,
             [](QNetworkReply *reply) { reply->deleteLater(); });
