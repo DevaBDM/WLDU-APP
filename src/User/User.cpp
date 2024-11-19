@@ -272,3 +272,15 @@ void User::openFile(const QUrl &url) const {
         path = url.toString(QUrl::None);
     qDebug() << "USER OpenFile" << path;
 }
+
+void User::setPp_location(const QUrl &newPp_location) {
+    if (newPp_location == pp_location())
+        return;
+    if (!m_sqlTableAccount.setData(
+            m_sqlTableAccount.index(
+                0, m_sqlTableAccount.fieldIndex("pp_location")),
+            newPp_location))
+        return;
+    m_sqlTableAccount.submit();
+    emit pp_locationChanged();
+}

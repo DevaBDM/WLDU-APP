@@ -16,7 +16,7 @@ class User : public QObject {
     Q_OBJECT
     Q_PROPERTY(bool registered READ registered NOTIFY registeredChanged)
     Q_PROPERTY(QString userName READ userName WRITE setUserName NOTIFY userNameChanged)
-    Q_PROPERTY(QUrl pp_location READ pp_location NOTIFY pp_locationChanged)
+    Q_PROPERTY(QUrl pp_location READ pp_location WRITE setPp_location NOTIFY pp_locationChanged)
     Q_PROPERTY(QString bio READ bio WRITE setBio NOTIFY bioChanged)
     // Q_PROPERTY(int level READ level NOTIFY levelChanged)
 
@@ -54,6 +54,7 @@ class User : public QObject {
     Q_INVOKABLE void openFile(const QUrl &) const;
 
     void setUserName(const QString &);
+    void setPp_location(const QUrl &);
     void setBio(const QString &);
 
     bool registered() const;

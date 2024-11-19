@@ -80,7 +80,7 @@ Pane {
                 id: yearCb
                 width: lv.width
                 displayText: currentText + " Year"
-                model: ['1st', '2nd', '3rd', '4th', '6th', '7th', '8th', '9th', '10th', '11th']
+                model: ['1st', '2nd', '3rd', '4th', '5th', '6th', '7th', '8th', '9th', '10th', '11th', '12th']
             }
             ComboBox {
                 id: semsterCb

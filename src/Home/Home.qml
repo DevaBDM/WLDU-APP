@@ -195,9 +195,9 @@ Page {
                 interactive: true
             }
             StackView.onRemoved: {
-                var s = profile.source;
                 profile.source = "";
-                profile.source = s;
+                User.pp_location = profilePicture.imageSource;
+                profile.source = profilePicture.imageSource;
             }
         }
     }
