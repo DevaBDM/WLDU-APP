@@ -76,7 +76,6 @@ QString Downloader::fileHash(QFile &file) {
 void Downloader::startDownload() {
     if (downloaded()) {
         emit done();
-        qDebug() << "DOWNLOADED: " << m_saveName;
         return;
     } else if (downloading())
         return;

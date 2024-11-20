@@ -4,6 +4,7 @@
 #include "Schedule/ScheduleModel.h"
 #include "constant.h"
 #include <QDateTime>
+#include <QDesktopServices>
 
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
@@ -270,7 +271,7 @@ void User::openFile(const QUrl &url) const {
         path = url.toLocalFile();
     else
         path = url.toString(QUrl::None);
-    qDebug() << "USER OpenFile" << path;
+    QDesktopServices::openUrl(QUrl::fromLocalFile(path));
 }
 
 void User::setPp_location(const QUrl &newPp_location) {
