@@ -83,14 +83,15 @@ Downloader *Files_Model::downloader(int row) {
         m_sqlTable.record(row).value("hash").toString());
 }
 
-void Files_Model::setPath(const QString &fullHost) {
+void Files_Model::setPath(const QString &fullHost,
+                          const QString &downloadPath) {
     if (m_downloadManager) {
         if (m_downloadManager->setFullHost(fullHost))
             emit downloadMangerChanged();
     } else {
         m_downloadManager = new DownloadManger{
             "CourseAttachments", fullHost,
-            QStandardPaths::writableLocation(QStandardPaths::DownloadLocation),
+            downloadPath,
             this};
         emit downloadMangerChanged();
     }

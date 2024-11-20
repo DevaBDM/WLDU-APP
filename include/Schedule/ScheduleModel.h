@@ -58,7 +58,7 @@ class Schedule_Model : public QAbstractListModel {
     int currentRow() const;
     void setCurrentRow(int row);
     void setEpoch(int);
-    void setNewCache(const QString &subHost,const QString&host,const QString&savePath);
+    void setNewCache(const QString &subHost,const QString&host,const QString&savePath,const QString& downloadPath);
     void setCache(CacheManager *);
 
     QVariant startTime() const;

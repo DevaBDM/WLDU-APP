@@ -25,10 +25,10 @@ DownloadManger::DownloadManger(const QString &dbName, const QString &fullHost,
 
 void DownloadManger::prepareModelDB() {
     QDir{}.mkpath(m_savePath);
-    QSqlQuery m_sql_query{m_db};
+    QSqlQuery sql_query{m_db};
     m_db.setDatabaseName(m_savePath + "/DownloadCache.db");
     m_db.open();
-    m_sql_query.exec(
+    sql_query.exec(
         "CREATE TABLE IF NOT EXISTS DownloadCache(pk_DownloadCache INTEGER "
         "PRIMARY KEY AUTOINCREMENT,hash TEXT UNIQUE,fileName "
         "TEXT,update_date "

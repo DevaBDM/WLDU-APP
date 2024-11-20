@@ -5,6 +5,7 @@
 #include "constant.h"
 #include <QDateTime>
 #include <QDesktopServices>
+#include <QStandardPaths>
 
 User::User(QObject *parent)
     : QObject{parent}, m_db{QSqlDatabase::addDatabase("QSQLITE", "User")},
@@ -47,11 +48,12 @@ bool User::prepareUserDB() {
     m_sqlTableAccount.setTable("Account");
     m_sqlTableStudent.setTable("Student");
     m_UserDBPrepared = m_sqlTableAccount.select() && m_sqlTableStudent.select();
+    setupDownloadLocation();
     return m_UserDBPrepared;
 }
 
 void User::prepareScheduleDB() {
-    m_schedule.setNewCache(subHost(), m_host, m_userCachePath);
+    m_schedule.setNewCache(subHost(), m_host, m_userCachePath, m_coursePath);
     emit scheduleChanged();
 }
 
@@ -284,4 +286,38 @@ void User::setPp_location(const QUrl &newPp_location) {
         return;
     m_sqlTableAccount.submit();
     emit pp_locationChanged();
+}
+
+void User::setupDownloadLocation() {
+    if (!m_UserDBPrepared)
+        return;
+    QSqlQuery sql_query{m_db};
+    sql_query.exec(
+        "CREATE TABLE IF NOT EXISTS UsedLocations(pk_UsedLocations INTEGER "
+        "PRIMARY KEY AUTOINCREMENT,name TEXT,location TEXT,update_date "
+        "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)");
+    sql_query.exec("SELECT * FROM UsedLocations");
+    QStringList list{
+        QStandardPaths::standardLocations(QStandardPaths::DownloadLocation)};
+    list.append(
+        QStandardPaths::standardLocations(QStandardPaths::AppDataLocation));
+    qDebug() << "DEVA PER" << list;
+    if (sql_query.next()) {
+        m_coursePath = sql_query.value("location").toString();
+    } else {
+        for (const auto &ele : list) {
+            QFile file{QDir{ele}.filePath("text.txt")};
+            bool perText{file.open(QFile::ReadWrite)};
+            file.close();
+            file.remove();
+            if (perText) {
+                m_coursePath = ele;
+                sql_query.exec(
+                    QString{"INSERT INTO UsedLocations(name,location) "
+                            "VALUES ('CourseAttachments','%1')"}
+                        .arg(ele));
+                break;
+            }
+        }
+    }
 }

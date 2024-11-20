@@ -95,6 +95,7 @@ class User : public QObject {
     bool prepareUserDB();
     void prepareScheduleDB();
     QString subHost() const;
+    void setupDownloadLocation();
 
   signals:
     void newsChanged();
@@ -134,6 +135,7 @@ class User : public QObject {
     CacheManager *m_userCache;
     bool m_UserDBPrepared;
     NewsModel m_news;
+    QString m_coursePath;
 };
 
 #endif // INCLUDE_USER_USER_H_

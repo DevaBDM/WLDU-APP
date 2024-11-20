@@ -211,8 +211,9 @@ void Schedule_Model::connectCurrentRow() {
 }
 
 void Schedule_Model::setNewCache(const QString &subHost, const QString &host,
-                                 const QString &savePath) {
-    m_filesModel.setPath(host + "/" + subHost);
+                                 const QString &savePath,
+                                 const QString &downloadPath ) {
+    m_filesModel.setPath(host + "/" + subHost,downloadPath);
     m_path = savePath + "/" + subHost + "/schedule";
     prepareModelDB();
     setCache(new CacheManager{subHost + "/schedule", host, savePath, this});

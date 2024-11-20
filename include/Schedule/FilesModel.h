@@ -42,7 +42,7 @@ class Files_Model : public QAbstractListModel {
     void prepareModelDB();
     void setFilter(int slipID, int scheduleID = 0);
 
-    void setPath(const QString &);
+    void setPath(const QString &,const QString&);
 
     DownloadManger *downloadManger() const;
 
