@@ -301,7 +301,6 @@ void User::setupDownloadLocation() {
         QStandardPaths::standardLocations(QStandardPaths::DownloadLocation)};
     list.append(
         QStandardPaths::standardLocations(QStandardPaths::AppDataLocation));
-    qDebug() << "DEVA PER" << list;
     if (sql_query.next()) {
         m_coursePath = sql_query.value("location").toString();
     } else {
