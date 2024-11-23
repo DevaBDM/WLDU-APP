@@ -128,6 +128,15 @@ ListView {
             }
             Label {
                 Layout.fillWidth: true
+                text: header
+                wrapMode: Label.Wrap
+                textFormat: Label.MarkdownText
+                onLinkActivated: link => {
+                    Qt.openUrlExternally(link);
+                }
+            }
+            Label {
+                Layout.fillWidth: true
                 Layout.fillHeight: true
                 text: main
                 wrapMode: Label.Wrap
