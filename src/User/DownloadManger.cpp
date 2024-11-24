@@ -35,6 +35,7 @@ void DownloadManger::prepareModelDB() {
         "TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)");
 
     m_sqlTable.setTable("DownloadCache");
+    m_sqlTable.setSort(0, Qt::DescendingOrder);
     m_sqlTable.select();
 }
 
@@ -78,7 +79,7 @@ Downloader *DownloadManger::download(QString saveName, QString hash,
 }
 
 void DownloadManger::cacheDownloaded(QString saveName, QString hash) {
-    beginInsertRows(QModelIndex{}, rowCount(), rowCount());
+    beginInsertRows(QModelIndex{}, 0, 0);
     QSqlRecord r{m_sqlTable.record()};
     r.setValue("fileName", saveName);
     r.setValue("hash", hash);

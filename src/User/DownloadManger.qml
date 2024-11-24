@@ -72,7 +72,7 @@ Pane {
                 }
                 NumberAnimation {
                     properties: "y"
-                    duration: 300
+                    duration: 200
                 }
             }
             remove: Transition {
@@ -85,7 +85,7 @@ Pane {
             add: Transition {
                 NumberAnimation {
                     properties: "y"
-                    duration: 400
+                    duration: 300
                 }
             }
         }
